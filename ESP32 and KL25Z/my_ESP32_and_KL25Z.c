@@ -152,12 +152,12 @@ void initUART2(uint32_t baud_rate) {
     UART2->C3 = 0;
 
     // Queue
-    //NCIV_SetPriority(UART2_IRQn, 128);
-    // NVIC_ClearPendingIRQ(UART2_IRQn);
-    // NVIC_EnableIRQ(UART2_IRQn);
+    NVIC_SetPriority(UART2_IRQn, 128);
+    NVIC_ClearPendingIRQ(UART2_IRQn);
+    NVIC_EnableIRQ(UART2_IRQn);
 
     // // Enable TX and RX Interrupts
-    // UART2->C2 |= UART_C2_TIE_MASK | UART_C2_RIE_MASK;
+    UART2->C2 |= UART_C2_TIE_MASK | UART_C2_RIE_MASK;
 
     // Initialise both tx_q and rx_q
     Q_Init(&tx_q);
@@ -173,6 +173,7 @@ void UART2_Transmit_Poll(uint8_t data) {
     // in transmit mode , waiting for data to be set
 }
 
+/* UART2 Receive Poll */
 uint8_t UART2_Receive_Poll(void) {
     while(!(UART2->S1 & UART_S1_RDRF_MASK)); // wait until receive data register is full
     return (UART2->D);
@@ -209,41 +210,42 @@ int main(void) {
 
 	while (1) {
 		offAllLed(); // With this here it will just blink for 0x80000 
-		rx_data = UART2_Receive_Poll();
-		if (rx_data == 0x30) { // OFF Red LED
-			ledControl(RED_LED, led_off);
-			delay(0x80000);
-		} else if (rx_data == 0x31) { // ON Red LED
-			ledControl(RED_LED, led_on);
-			delay(0x80000);
-		} else if (rx_data == 0x32) { // OFF Green LED
-			ledControl(GREEN_LED, led_off);
-			delay(0x80000);
-		} else if (rx_data == 0x33) { // ON Green LED
-			ledControl(GREEN_LED, led_on);
-			delay(0x80000);
-		} else {
-			ledControl(BLUE_LED, led_on);
-			delay(0x80000);
-		}
 
-		// IRQ Mode
-		// if (rx_IRQ_data == 0x30) { // OFF Red LED
+		// rx_data = UART2_Receive_Poll();
+		// if (rx_data == 0x30) { // OFF Red LED
 		// 	ledControl(RED_LED, led_off);
 		// 	delay(0x80000);
-		// } else if (rx_IRQ_data == 0x31) { // ON Red LED
+		// } else if (rx_data == 0x31) { // ON Red LED
 		// 	ledControl(RED_LED, led_on);
 		// 	delay(0x80000);
-		// } else if (rx_IRQ_data == 0x32) { // OFF Green LED
-		// 	ledControl(GREEN_LED, led_on);
+		// } else if (rx_data == 0x32) { // OFF Green LED
+		// 	ledControl(GREEN_LED, led_off);
 		// 	delay(0x80000);
-		// } else if (rx_IRQ_data == 0x33) { // ON Green LED
+		// } else if (rx_data == 0x33) { // ON Green LED
 		// 	ledControl(GREEN_LED, led_on);
 		// 	delay(0x80000);
 		// } else {
 		// 	ledControl(BLUE_LED, led_on);
 		// 	delay(0x80000);
 		// }
+
+		//IRQ Mode
+		if (rx_IRQ_data == 0x30) { // OFF Red LED
+			PTB->PSOR = MASK(RED_LED);
+			delay(0x80000);
+		} else if (rx_IRQ_data == 0x31) { // ON Red LED
+			PTB->PCOR = MASK(RED_LED);
+			delay(0x80000);
+		} else if (rx_IRQ_data == 0x32) { // OFF Green LED
+			PTB->PSOR = MASK(GREEN_LED);
+			delay(0x80000);
+		} else if (rx_IRQ_data == 0x33) { // ON Green LED
+			PTB->PCOR = MASK(GREEN_LED);
+			delay(0x80000);
+		} else {
+			PTD->PCOR = MASK(BLUE_LED);
+			delay(0x80000);
+		}
 
 	}
 }
