@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\My_ESP32_and_KL25Z.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\My_ESP32_and_KL25Z.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Mar 12 13:04:01 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Mar 12 13:27:57 2024
 <BR><P>
 <H3>Maximum Stack Usage =         24 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -348,7 +348,7 @@ Global Symbols
 
 <P><STRONG><a name="[46]"></a>__aeabi_uidivmod</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, aeabi_sdiv.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
 </UL>
 
 <P><STRONG><a name="[74]"></a>__aeabi_idiv</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, aeabi_sdiv.o(.text), UNUSED)
@@ -412,19 +412,21 @@ Global Symbols
 <LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Dequeue
 </UL>
 
-<P><STRONG><a name="[48]"></a>Q_Full</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.Q_Full))
+<P><STRONG><a name="[49]"></a>Q_Full</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.Q_Full))
 <BR><BR>[Called By]<UL><LI><a href="#[19]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART2_IRQHandler
 </UL>
 
-<P><STRONG><a name="[4a]"></a>Q_Init</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.Q_Init))
-<BR><BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
+<P><STRONG><a name="[4c]"></a>Q_Init</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.Q_Init))
+<BR><BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
 </UL>
 
 <P><STRONG><a name="[2b]"></a>SystemInit</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, system_mkl25z4.o(i.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(.text)
 </UL>
-<P><STRONG><a name="[4d]"></a>UART2_Receive_Poll</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.UART2_Receive_Poll))
-<BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<P><STRONG><a name="[47]"></a>__ARM_common_switch8</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, system_mkl25z4.o(i.__ARM_common_switch8))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __ARM_common_switch8
+</UL>
+<BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
 </UL>
 
 <P><STRONG><a name="[45]"></a>SystemCoreClockUpdate</STRONG> (Thumb, 372 bytes, Stack size 16 bytes, system_mkl25z4.o(i.SystemCoreClockUpdate))
@@ -436,59 +438,61 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[19]"></a>UART2_IRQHandler</STRONG> (Thumb, 120 bytes, Stack size 4 bytes, my_esp32_and_kl25z.o(i.UART2_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = UART2_IRQHandler &rArr; Q_Dequeue
+<P><STRONG><a name="[19]"></a>UART2_IRQHandler</STRONG> (Thumb, 106 bytes, Stack size 8 bytes, my_esp32_and_kl25z.o(i.UART2_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = UART2_IRQHandler &rArr; Q_Dequeue
 </UL>
-<BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Full
+<BR>[Calls]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Full
 <LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Empty
 <LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Dequeue
+<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_ClearPendingIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(RESET)
 </UL>
-<P><STRONG><a name="[47]"></a>__ARM_common_switch8</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, system_mkl25z4.o(i.__ARM_common_switch8))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __ARM_common_switch8
-</UL>
-<BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
-</UL>
-
-<P><STRONG><a name="[4b]"></a>initLED</STRONG> (Thumb, 124 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.initLED))
+<P><STRONG><a name="[4d]"></a>initLED</STRONG> (Thumb, 124 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.initLED))
 <BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[49]"></a>initUART2</STRONG> (Thumb, 154 bytes, Stack size 16 bytes, my_esp32_and_kl25z.o(i.initUART2))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = initUART2
+<P><STRONG><a name="[4a]"></a>initUART2</STRONG> (Thumb, 208 bytes, Stack size 16 bytes, my_esp32_and_kl25z.o(i.initUART2))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = initUART2 &rArr; __NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
-<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Init
+<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Init
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_SetPriority
+<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_ClearPendingIRQ
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[4e]"></a>ledControl</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.ledControl))
-<BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-</UL>
-
-<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 140 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.main))
+<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 136 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = main &rArr; SystemCoreClockUpdate &rArr; __ARM_common_switch8
 </UL>
 <BR>[Calls]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;offAllLed
-<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ledControl
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
-<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initLED
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART2_Receive_Poll
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;offAllLed
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initLED
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[4c]"></a>offAllLed</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.offAllLed))
+<P><STRONG><a name="[4e]"></a>offAllLed</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.offAllLed))
 <BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 <P>
 <H3>
 Local Symbols
 </H3>
+<P><STRONG><a name="[48]"></a>__NVIC_ClearPendingIRQ</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ))
+<BR><BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
+<LI><a href="#[19]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART2_IRQHandler
+</UL>
+
+<P><STRONG><a name="[4b]"></a>__NVIC_SetPriority</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, my_esp32_and_kl25z.o(i.__NVIC_SetPriority))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __NVIC_SetPriority
+</UL>
+<BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUART2
+</UL>
+
 <P><STRONG><a name="[4f]"></a>delay</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, my_esp32_and_kl25z.o(i.delay))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = delay
 </UL>
