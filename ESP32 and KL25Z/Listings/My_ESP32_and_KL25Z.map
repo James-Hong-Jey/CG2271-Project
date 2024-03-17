@@ -4,19 +4,31 @@ Component: ARM Compiler 5.06 update 6 (build 750) Tool: armlink [4d35ed]
 
 Section Cross References
 
+    my_esp32_and_kl25z.o(i.Q_Dequeue) refers to my_esp32_and_kl25z.o(i.Q_Empty) for Q_Empty
+    my_esp32_and_kl25z.o(i.Q_Enqueue) refers to my_esp32_and_kl25z.o(i.Q_Full) for Q_Full
+    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ) for __NVIC_ClearPendingIRQ
+    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.Q_Empty) for Q_Empty
+    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.Q_Dequeue) for Q_Dequeue
+    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.Q_Full) for Q_Full
+    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(.bss) for tx_q
+    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(.data) for rx_IRQ_data
     my_esp32_and_kl25z.o(i.initUART2) refers to aeabi_sdiv.o(.text) for __aeabi_uidivmod
+    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(i.__NVIC_SetPriority) for __NVIC_SetPriority
+    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ) for __NVIC_ClearPendingIRQ
+    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(i.Q_Init) for Q_Init
+    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(.bss) for tx_q
     my_esp32_and_kl25z.o(i.main) refers to system_mkl25z4.o(i.SystemCoreClockUpdate) for SystemCoreClockUpdate
     my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.initLED) for initLED
     my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.initUART2) for initUART2
     my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.offAllLed) for offAllLed
-    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.UART2_Receive_Poll) for UART2_Receive_Poll
-    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.ledControl) for ledControl
     my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.delay) for delay
+    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(.data) for rx_IRQ_data
     startup_mkl25z4.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(RESET) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(RESET) refers to startup_mkl25z4.o(STACK) for __initial_sp
     startup_mkl25z4.o(RESET) refers to startup_mkl25z4.o(.text) for Reset_Handler
+    startup_mkl25z4.o(RESET) refers to my_esp32_and_kl25z.o(i.UART2_IRQHandler) for UART2_IRQHandler
     startup_mkl25z4.o(.ARM.__at_0x400) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(.text) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(.text) refers to system_mkl25z4.o(i.SystemInit) for SystemInit
@@ -139,11 +151,14 @@ Removing Unused input sections from the image.
 
     Removing my_esp32_and_kl25z.o(.rev16_text), (4 bytes).
     Removing my_esp32_and_kl25z.o(.revsh_text), (4 bytes).
+    Removing my_esp32_and_kl25z.o(i.Q_Enqueue), (46 bytes).
+    Removing my_esp32_and_kl25z.o(i.UART2_Receive_Poll), (24 bytes).
     Removing my_esp32_and_kl25z.o(i.UART2_Transmit_Poll), (24 bytes).
+    Removing my_esp32_and_kl25z.o(i.ledControl), (88 bytes).
     Removing system_mkl25z4.o(.rev16_text), (4 bytes).
     Removing system_mkl25z4.o(.revsh_text), (4 bytes).
 
-5 unused section(s) (total 40 bytes) removed from the image.
+8 unused section(s) (total 198 bytes) removed from the image.
 
 ==============================================================================
 
@@ -154,58 +169,58 @@ Image Symbol Table
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
     RESET                                    0x00000000   Section      192  startup_mkl25z4.o(RESET)
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_zi.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_copy.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry2.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
-    ../clib/angel/rt.s                       0x00000000   Number         0  rt_div0.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry2.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  aeabi_idiv0_sigfpe.o ABSOLUTE
+    ../clib/angel/rt.s                       0x00000000   Number         0  rt_div0.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  rt_raise.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  aeabi_idiv0.o ABSOLUTE
     ../clib/angel/scatterp.s                 0x00000000   Number         0  __scatter.o ABSOLUTE
     ../clib/angel/startup.s                  0x00000000   Number         0  __main.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  libspace.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  tempstk.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_wrch.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_command.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_exit.o ABSOLUTE
-    ../clib/armsys.c                         0x00000000   Number         0  no_argv.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
+    ../clib/armsys.c                         0x00000000   Number         0  no_argv.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
-    ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv_div0.o ABSOLUTE
     ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv.o ABSOLUTE
+    ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv_div0.o ABSOLUTE
     ../clib/heapalloc.c                      0x00000000   Number         0  hrguard.o ABSOLUTE
     ../clib/heapaux.c                        0x00000000   Number         0  heapauxi.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libinit2.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libshutdown.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libshutdown2.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_outer.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_formal.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_exit.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  __raise.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  __raise.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
     ../clib/signal.s                         0x00000000   Number         0  defsig.o ABSOLUTE
     ../clib/stdlib.c                         0x00000000   Number         0  exit.o ABSOLUTE
     ../fplib/cfplib/fpinit.c                 0x00000000   Number         0  fpinit.o ABSOLUTE
@@ -269,25 +284,34 @@ Image Symbol Table
     .text                                    0x0000035c   Section        0  sys_exit.o(.text)
     .text                                    0x00000368   Section        2  use_no_semi.o(.text)
     .text                                    0x0000036a   Section        0  indicate_semi.o(.text)
-    i.SystemInit                             0x0000036c   Section        0  system_mkl25z4.o(i.SystemInit)
-    i.UART2_Receive_Poll                     0x00000378   Section        0  my_esp32_and_kl25z.o(i.UART2_Receive_Poll)
-    i.__ARM_common_switch8                   0x00000390   Section        0  system_mkl25z4.o(i.__ARM_common_switch8)
-    i.delay                                  0x000003ac   Section        0  my_esp32_and_kl25z.o(i.delay)
-    delay                                    0x000003ad   Thumb Code    20  my_esp32_and_kl25z.o(i.delay)
-    i.offAllLed                              0x000003c0   Section        0  my_esp32_and_kl25z.o(i.offAllLed)
+    i.Q_Dequeue                              0x0000036a   Section        0  my_esp32_and_kl25z.o(i.Q_Dequeue)
+    i.Q_Empty                                0x0000039c   Section        0  my_esp32_and_kl25z.o(i.Q_Empty)
+    i.Q_Full                                 0x000003a4   Section        0  my_esp32_and_kl25z.o(i.Q_Full)
+    i.Q_Init                                 0x000003b4   Section        0  my_esp32_and_kl25z.o(i.Q_Init)
+    i.SystemInit                             0x000003cc   Section        0  system_mkl25z4.o(i.SystemInit)
+    i.__ARM_common_switch8                   0x000003d8   Section        0  system_mkl25z4.o(i.__ARM_common_switch8)
     .ARM.__at_0x400                          0x00000400   Section       16  startup_mkl25z4.o(.ARM.__at_0x400)
     i.SystemCoreClockUpdate                  0x00000410   Section        0  system_mkl25z4.o(i.SystemCoreClockUpdate)
-    i.initLED                                0x000005a0   Section        0  my_esp32_and_kl25z.o(i.initLED)
-    i.initUART2                              0x0000062c   Section        0  my_esp32_and_kl25z.o(i.initUART2)
-    i.ledControl                             0x000006c8   Section        0  my_esp32_and_kl25z.o(i.ledControl)
-    i.main                                   0x00000720   Section        0  my_esp32_and_kl25z.o(i.main)
-    .data                                    0x1ffff000   Section        4  system_mkl25z4.o(.data)
-    .bss                                     0x1ffff004   Section       96  libspace.o(.bss)
-    HEAP                                     0x1ffff068   Section        0  startup_mkl25z4.o(HEAP)
-    STACK                                    0x1ffff068   Section      256  startup_mkl25z4.o(STACK)
-    Heap_Mem                                 0x1ffff068   Data           0  startup_mkl25z4.o(HEAP)
-    Stack_Mem                                0x1ffff068   Data         256  startup_mkl25z4.o(STACK)
-    __initial_sp                             0x1ffff168   Data           0  startup_mkl25z4.o(STACK)
+    i.UART2_IRQHandler                       0x000005a0   Section        0  my_esp32_and_kl25z.o(i.UART2_IRQHandler)
+    i.__NVIC_ClearPendingIRQ                 0x0000061c   Section        0  my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ)
+    __NVIC_ClearPendingIRQ                   0x0000061d   Thumb Code    18  my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ)
+    i.__NVIC_SetPriority                     0x00000634   Section        0  my_esp32_and_kl25z.o(i.__NVIC_SetPriority)
+    __NVIC_SetPriority                       0x00000635   Thumb Code   110  my_esp32_and_kl25z.o(i.__NVIC_SetPriority)
+    i.delay                                  0x000006ac   Section        0  my_esp32_and_kl25z.o(i.delay)
+    delay                                    0x000006ad   Thumb Code    20  my_esp32_and_kl25z.o(i.delay)
+    i.initLED                                0x000006c0   Section        0  my_esp32_and_kl25z.o(i.initLED)
+    i.initUART2                              0x0000074c   Section        0  my_esp32_and_kl25z.o(i.initUART2)
+    i.main                                   0x00000834   Section        0  my_esp32_and_kl25z.o(i.main)
+    i.offAllLed                              0x000008c4   Section        0  my_esp32_and_kl25z.o(i.offAllLed)
+    .data                                    0x1ffff000   Section        1  my_esp32_and_kl25z.o(.data)
+    .data                                    0x1ffff004   Section        4  system_mkl25z4.o(.data)
+    .bss                                     0x1ffff008   Section       88  my_esp32_and_kl25z.o(.bss)
+    .bss                                     0x1ffff060   Section       96  libspace.o(.bss)
+    HEAP                                     0x1ffff0c0   Section        0  startup_mkl25z4.o(HEAP)
+    STACK                                    0x1ffff0c0   Section      256  startup_mkl25z4.o(STACK)
+    Heap_Mem                                 0x1ffff0c0   Data           0  startup_mkl25z4.o(HEAP)
+    Stack_Mem                                0x1ffff0c0   Data         256  startup_mkl25z4.o(STACK)
+    __initial_sp                             0x1ffff1c0   Data           0  startup_mkl25z4.o(STACK)
 
     Global Symbols
 
@@ -411,7 +435,6 @@ Image Symbol Table
     TSI0_IRQHandler                          0x0000017b   Thumb Code     0  startup_mkl25z4.o(.text)
     UART0_IRQHandler                         0x0000017b   Thumb Code     0  startup_mkl25z4.o(.text)
     UART1_IRQHandler                         0x0000017b   Thumb Code     0  startup_mkl25z4.o(.text)
-    UART2_IRQHandler                         0x0000017b   Thumb Code     0  startup_mkl25z4.o(.text)
     USB0_IRQHandler                          0x0000017b   Thumb Code     0  startup_mkl25z4.o(.text)
     __user_initial_stackheap                 0x00000181   Thumb Code     0  startup_mkl25z4.o(.text)
     __aeabi_uidiv                            0x000001a5   Thumb Code     0  aeabi_sdiv.o(.text)
@@ -429,21 +452,27 @@ Image Symbol Table
     _sys_exit                                0x0000035d   Thumb Code     8  sys_exit.o(.text)
     __I$use$semihosting                      0x00000369   Thumb Code     0  use_no_semi.o(.text)
     __use_no_semihosting_swi                 0x00000369   Thumb Code     2  use_no_semi.o(.text)
+    Q_Dequeue                                0x0000036b   Thumb Code    50  my_esp32_and_kl25z.o(i.Q_Dequeue)
     __semihosting_library_function           0x0000036b   Thumb Code     0  indicate_semi.o(.text)
-    SystemInit                               0x0000036d   Thumb Code     8  system_mkl25z4.o(i.SystemInit)
-    UART2_Receive_Poll                       0x00000379   Thumb Code    20  my_esp32_and_kl25z.o(i.UART2_Receive_Poll)
-    __ARM_common_switch8                     0x00000391   Thumb Code    28  system_mkl25z4.o(i.__ARM_common_switch8)
-    offAllLed                                0x000003c1   Thumb Code    22  my_esp32_and_kl25z.o(i.offAllLed)
-    Region$$Table$$Base                      0x000003dc   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x000003fc   Number         0  anon$$obj.o(Region$$Table)
+    Q_Empty                                  0x0000039d   Thumb Code     8  my_esp32_and_kl25z.o(i.Q_Empty)
+    Q_Full                                   0x000003a5   Thumb Code    16  my_esp32_and_kl25z.o(i.Q_Full)
+    Q_Init                                   0x000003b5   Thumb Code    24  my_esp32_and_kl25z.o(i.Q_Init)
+    SystemInit                               0x000003cd   Thumb Code     8  system_mkl25z4.o(i.SystemInit)
+    __ARM_common_switch8                     0x000003d9   Thumb Code    28  system_mkl25z4.o(i.__ARM_common_switch8)
     SystemCoreClockUpdate                    0x00000411   Thumb Code   372  system_mkl25z4.o(i.SystemCoreClockUpdate)
-    initLED                                  0x000005a1   Thumb Code   124  my_esp32_and_kl25z.o(i.initLED)
-    initUART2                                0x0000062d   Thumb Code   142  my_esp32_and_kl25z.o(i.initUART2)
-    ledControl                               0x000006c9   Thumb Code    84  my_esp32_and_kl25z.o(i.ledControl)
-    main                                     0x00000721   Thumb Code   140  my_esp32_and_kl25z.o(i.main)
-    SystemCoreClock                          0x1ffff000   Data           4  system_mkl25z4.o(.data)
-    __libspace_start                         0x1ffff004   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x1ffff064   Data           0  libspace.o(.bss)
+    UART2_IRQHandler                         0x000005a1   Thumb Code   106  my_esp32_and_kl25z.o(i.UART2_IRQHandler)
+    initLED                                  0x000006c1   Thumb Code   124  my_esp32_and_kl25z.o(i.initLED)
+    initUART2                                0x0000074d   Thumb Code   208  my_esp32_and_kl25z.o(i.initUART2)
+    main                                     0x00000835   Thumb Code   136  my_esp32_and_kl25z.o(i.main)
+    offAllLed                                0x000008c5   Thumb Code    22  my_esp32_and_kl25z.o(i.offAllLed)
+    Region$$Table$$Base                      0x000008e0   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x00000900   Number         0  anon$$obj.o(Region$$Table)
+    rx_IRQ_data                              0x1ffff000   Data           1  my_esp32_and_kl25z.o(.data)
+    SystemCoreClock                          0x1ffff004   Data           4  system_mkl25z4.o(.data)
+    tx_q                                     0x1ffff008   Data          44  my_esp32_and_kl25z.o(.bss)
+    rx_q                                     0x1ffff034   Data          44  my_esp32_and_kl25z.o(.bss)
+    __libspace_start                         0x1ffff060   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x1ffff0c0   Data           0  libspace.o(.bss)
 
 
 
@@ -453,101 +482,107 @@ Memory Map of the image
 
   Image Entry point : 0x00000165
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x000007b4, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00000908, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x000007b0, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00000900, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x00000000   0x00000000   0x000000c0   Data   RO           89    RESET               startup_mkl25z4.o
-    0x000000c0   0x000000c0   0x00000008   Code   RO          139  * !!!main             c_p.l(__main.o)
-    0x000000c8   0x000000c8   0x0000003c   Code   RO          308    !!!scatter          c_p.l(__scatter.o)
-    0x00000104   0x00000104   0x0000001a   Code   RO          310    !!handler_copy      c_p.l(__scatter_copy.o)
+    0x00000000   0x00000000   0x000000c0   Data   RO          139    RESET               startup_mkl25z4.o
+    0x000000c0   0x000000c0   0x00000008   Code   RO          192  * !!!main             c_p.l(__main.o)
+    0x000000c8   0x000000c8   0x0000003c   Code   RO          361    !!!scatter          c_p.l(__scatter.o)
+    0x00000104   0x00000104   0x0000001a   Code   RO          363    !!handler_copy      c_p.l(__scatter_copy.o)
     0x0000011e   0x0000011e   0x00000002   PAD
-    0x00000120   0x00000120   0x0000001c   Code   RO          312    !!handler_zi        c_p.l(__scatter_zi.o)
-    0x0000013c   0x0000013c   0x00000002   Code   RO          177    .ARM.Collect$$libinit$$00000000  c_p.l(libinit.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          191    .ARM.Collect$$libinit$$00000002  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          193    .ARM.Collect$$libinit$$00000004  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          196    .ARM.Collect$$libinit$$0000000A  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          198    .ARM.Collect$$libinit$$0000000C  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          200    .ARM.Collect$$libinit$$0000000E  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          203    .ARM.Collect$$libinit$$00000011  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          205    .ARM.Collect$$libinit$$00000013  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          207    .ARM.Collect$$libinit$$00000015  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          209    .ARM.Collect$$libinit$$00000017  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          211    .ARM.Collect$$libinit$$00000019  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          213    .ARM.Collect$$libinit$$0000001B  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          215    .ARM.Collect$$libinit$$0000001D  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          217    .ARM.Collect$$libinit$$0000001F  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          219    .ARM.Collect$$libinit$$00000021  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          221    .ARM.Collect$$libinit$$00000023  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          223    .ARM.Collect$$libinit$$00000025  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          227    .ARM.Collect$$libinit$$0000002C  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          229    .ARM.Collect$$libinit$$0000002E  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          231    .ARM.Collect$$libinit$$00000030  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000000   Code   RO          233    .ARM.Collect$$libinit$$00000032  c_p.l(libinit2.o)
-    0x0000013e   0x0000013e   0x00000002   Code   RO          234    .ARM.Collect$$libinit$$00000033  c_p.l(libinit2.o)
-    0x00000140   0x00000140   0x00000002   Code   RO          265    .ARM.Collect$$libshutdown$$00000000  c_p.l(libshutdown.o)
-    0x00000142   0x00000142   0x00000000   Code   RO          291    .ARM.Collect$$libshutdown$$00000002  c_p.l(libshutdown2.o)
-    0x00000142   0x00000142   0x00000000   Code   RO          293    .ARM.Collect$$libshutdown$$00000004  c_p.l(libshutdown2.o)
-    0x00000142   0x00000142   0x00000000   Code   RO          296    .ARM.Collect$$libshutdown$$00000007  c_p.l(libshutdown2.o)
-    0x00000142   0x00000142   0x00000000   Code   RO          299    .ARM.Collect$$libshutdown$$0000000A  c_p.l(libshutdown2.o)
-    0x00000142   0x00000142   0x00000000   Code   RO          301    .ARM.Collect$$libshutdown$$0000000C  c_p.l(libshutdown2.o)
-    0x00000142   0x00000142   0x00000000   Code   RO          304    .ARM.Collect$$libshutdown$$0000000F  c_p.l(libshutdown2.o)
-    0x00000142   0x00000142   0x00000002   Code   RO          305    .ARM.Collect$$libshutdown$$00000010  c_p.l(libshutdown2.o)
-    0x00000144   0x00000144   0x00000000   Code   RO          141    .ARM.Collect$$rtentry$$00000000  c_p.l(__rtentry.o)
-    0x00000144   0x00000144   0x00000000   Code   RO          147    .ARM.Collect$$rtentry$$00000002  c_p.l(__rtentry2.o)
-    0x00000144   0x00000144   0x00000006   Code   RO          159    .ARM.Collect$$rtentry$$00000004  c_p.l(__rtentry4.o)
-    0x0000014a   0x0000014a   0x00000000   Code   RO          149    .ARM.Collect$$rtentry$$00000009  c_p.l(__rtentry2.o)
-    0x0000014a   0x0000014a   0x00000004   Code   RO          150    .ARM.Collect$$rtentry$$0000000A  c_p.l(__rtentry2.o)
-    0x0000014e   0x0000014e   0x00000000   Code   RO          152    .ARM.Collect$$rtentry$$0000000C  c_p.l(__rtentry2.o)
-    0x0000014e   0x0000014e   0x00000008   Code   RO          153    .ARM.Collect$$rtentry$$0000000D  c_p.l(__rtentry2.o)
-    0x00000156   0x00000156   0x00000002   Code   RO          182    .ARM.Collect$$rtexit$$00000000  c_p.l(rtexit.o)
-    0x00000158   0x00000158   0x00000000   Code   RO          238    .ARM.Collect$$rtexit$$00000002  c_p.l(rtexit2.o)
-    0x00000158   0x00000158   0x00000004   Code   RO          239    .ARM.Collect$$rtexit$$00000003  c_p.l(rtexit2.o)
-    0x0000015c   0x0000015c   0x00000006   Code   RO          240    .ARM.Collect$$rtexit$$00000004  c_p.l(rtexit2.o)
+    0x00000120   0x00000120   0x0000001c   Code   RO          365    !!handler_zi        c_p.l(__scatter_zi.o)
+    0x0000013c   0x0000013c   0x00000002   Code   RO          230    .ARM.Collect$$libinit$$00000000  c_p.l(libinit.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          244    .ARM.Collect$$libinit$$00000002  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          246    .ARM.Collect$$libinit$$00000004  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          249    .ARM.Collect$$libinit$$0000000A  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          251    .ARM.Collect$$libinit$$0000000C  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          253    .ARM.Collect$$libinit$$0000000E  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          256    .ARM.Collect$$libinit$$00000011  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          258    .ARM.Collect$$libinit$$00000013  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          260    .ARM.Collect$$libinit$$00000015  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          262    .ARM.Collect$$libinit$$00000017  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          264    .ARM.Collect$$libinit$$00000019  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          266    .ARM.Collect$$libinit$$0000001B  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          268    .ARM.Collect$$libinit$$0000001D  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          270    .ARM.Collect$$libinit$$0000001F  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          272    .ARM.Collect$$libinit$$00000021  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          274    .ARM.Collect$$libinit$$00000023  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          276    .ARM.Collect$$libinit$$00000025  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          280    .ARM.Collect$$libinit$$0000002C  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          282    .ARM.Collect$$libinit$$0000002E  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          284    .ARM.Collect$$libinit$$00000030  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000000   Code   RO          286    .ARM.Collect$$libinit$$00000032  c_p.l(libinit2.o)
+    0x0000013e   0x0000013e   0x00000002   Code   RO          287    .ARM.Collect$$libinit$$00000033  c_p.l(libinit2.o)
+    0x00000140   0x00000140   0x00000002   Code   RO          318    .ARM.Collect$$libshutdown$$00000000  c_p.l(libshutdown.o)
+    0x00000142   0x00000142   0x00000000   Code   RO          344    .ARM.Collect$$libshutdown$$00000002  c_p.l(libshutdown2.o)
+    0x00000142   0x00000142   0x00000000   Code   RO          346    .ARM.Collect$$libshutdown$$00000004  c_p.l(libshutdown2.o)
+    0x00000142   0x00000142   0x00000000   Code   RO          349    .ARM.Collect$$libshutdown$$00000007  c_p.l(libshutdown2.o)
+    0x00000142   0x00000142   0x00000000   Code   RO          352    .ARM.Collect$$libshutdown$$0000000A  c_p.l(libshutdown2.o)
+    0x00000142   0x00000142   0x00000000   Code   RO          354    .ARM.Collect$$libshutdown$$0000000C  c_p.l(libshutdown2.o)
+    0x00000142   0x00000142   0x00000000   Code   RO          357    .ARM.Collect$$libshutdown$$0000000F  c_p.l(libshutdown2.o)
+    0x00000142   0x00000142   0x00000002   Code   RO          358    .ARM.Collect$$libshutdown$$00000010  c_p.l(libshutdown2.o)
+    0x00000144   0x00000144   0x00000000   Code   RO          194    .ARM.Collect$$rtentry$$00000000  c_p.l(__rtentry.o)
+    0x00000144   0x00000144   0x00000000   Code   RO          200    .ARM.Collect$$rtentry$$00000002  c_p.l(__rtentry2.o)
+    0x00000144   0x00000144   0x00000006   Code   RO          212    .ARM.Collect$$rtentry$$00000004  c_p.l(__rtentry4.o)
+    0x0000014a   0x0000014a   0x00000000   Code   RO          202    .ARM.Collect$$rtentry$$00000009  c_p.l(__rtentry2.o)
+    0x0000014a   0x0000014a   0x00000004   Code   RO          203    .ARM.Collect$$rtentry$$0000000A  c_p.l(__rtentry2.o)
+    0x0000014e   0x0000014e   0x00000000   Code   RO          205    .ARM.Collect$$rtentry$$0000000C  c_p.l(__rtentry2.o)
+    0x0000014e   0x0000014e   0x00000008   Code   RO          206    .ARM.Collect$$rtentry$$0000000D  c_p.l(__rtentry2.o)
+    0x00000156   0x00000156   0x00000002   Code   RO          235    .ARM.Collect$$rtexit$$00000000  c_p.l(rtexit.o)
+    0x00000158   0x00000158   0x00000000   Code   RO          291    .ARM.Collect$$rtexit$$00000002  c_p.l(rtexit2.o)
+    0x00000158   0x00000158   0x00000004   Code   RO          292    .ARM.Collect$$rtexit$$00000003  c_p.l(rtexit2.o)
+    0x0000015c   0x0000015c   0x00000006   Code   RO          293    .ARM.Collect$$rtexit$$00000004  c_p.l(rtexit2.o)
     0x00000162   0x00000162   0x00000002   PAD
-    0x00000164   0x00000164   0x00000040   Code   RO           91  * .text               startup_mkl25z4.o
-    0x000001a4   0x000001a4   0x0000015a   Code   RO          133    .text               c_p.l(aeabi_sdiv.o)
-    0x000002fe   0x000002fe   0x00000006   Code   RO          137    .text               c_p.l(heapauxi.o)
-    0x00000304   0x00000304   0x0000003e   Code   RO          163    .text               c_p.l(sys_stackheap_outer.o)
-    0x00000342   0x00000342   0x00000010   Code   RO          166    .text               c_p.l(exit.o)
+    0x00000164   0x00000164   0x00000040   Code   RO          141  * .text               startup_mkl25z4.o
+    0x000001a4   0x000001a4   0x0000015a   Code   RO          186    .text               c_p.l(aeabi_sdiv.o)
+    0x000002fe   0x000002fe   0x00000006   Code   RO          190    .text               c_p.l(heapauxi.o)
+    0x00000304   0x00000304   0x0000003e   Code   RO          216    .text               c_p.l(sys_stackheap_outer.o)
+    0x00000342   0x00000342   0x00000010   Code   RO          219    .text               c_p.l(exit.o)
     0x00000352   0x00000352   0x00000002   PAD
-    0x00000354   0x00000354   0x00000008   Code   RO          178    .text               c_p.l(libspace.o)
-    0x0000035c   0x0000035c   0x0000000c   Code   RO          235    .text               c_p.l(sys_exit.o)
-    0x00000368   0x00000368   0x00000002   Code   RO          254    .text               c_p.l(use_no_semi.o)
-    0x0000036a   0x0000036a   0x00000000   Code   RO          256    .text               c_p.l(indicate_semi.o)
-    0x0000036a   0x0000036a   0x00000002   PAD
-    0x0000036c   0x0000036c   0x0000000c   Code   RO          100    i.SystemInit        system_mkl25z4.o
-    0x00000378   0x00000378   0x00000018   Code   RO            3    i.UART2_Receive_Poll  my_esp32_and_kl25z.o
-    0x00000390   0x00000390   0x0000001c   Code   RO          123    i.__ARM_common_switch8  system_mkl25z4.o
-    0x000003ac   0x000003ac   0x00000014   Code   RO            5    i.delay             my_esp32_and_kl25z.o
-    0x000003c0   0x000003c0   0x0000001c   Code   RO           10    i.offAllLed         my_esp32_and_kl25z.o
-    0x000003dc   0x000003dc   0x00000020   Data   RO          306    Region$$Table       anon$$obj.o
-    0x000003fc   0x000003fc   0x00000004   PAD
-    0x00000400   0x00000400   0x00000010   Code   RO           90    .ARM.__at_0x400     startup_mkl25z4.o
-    0x00000410   0x00000410   0x00000190   Code   RO           99    i.SystemCoreClockUpdate  system_mkl25z4.o
-    0x000005a0   0x000005a0   0x0000008c   Code   RO            6    i.initLED           my_esp32_and_kl25z.o
-    0x0000062c   0x0000062c   0x0000009c   Code   RO            7    i.initUART2         my_esp32_and_kl25z.o
-    0x000006c8   0x000006c8   0x00000058   Code   RO            8    i.ledControl        my_esp32_and_kl25z.o
-    0x00000720   0x00000720   0x00000090   Code   RO            9    i.main              my_esp32_and_kl25z.o
+    0x00000354   0x00000354   0x00000008   Code   RO          231    .text               c_p.l(libspace.o)
+    0x0000035c   0x0000035c   0x0000000c   Code   RO          288    .text               c_p.l(sys_exit.o)
+    0x00000368   0x00000368   0x00000002   Code   RO          307    .text               c_p.l(use_no_semi.o)
+    0x0000036a   0x0000036a   0x00000000   Code   RO          309    .text               c_p.l(indicate_semi.o)
+    0x0000036a   0x0000036a   0x00000032   Code   RO            3    i.Q_Dequeue         my_esp32_and_kl25z.o
+    0x0000039c   0x0000039c   0x00000008   Code   RO            4    i.Q_Empty           my_esp32_and_kl25z.o
+    0x000003a4   0x000003a4   0x00000010   Code   RO            6    i.Q_Full            my_esp32_and_kl25z.o
+    0x000003b4   0x000003b4   0x00000018   Code   RO            7    i.Q_Init            my_esp32_and_kl25z.o
+    0x000003cc   0x000003cc   0x0000000c   Code   RO          150    i.SystemInit        system_mkl25z4.o
+    0x000003d8   0x000003d8   0x0000001c   Code   RO          173    i.__ARM_common_switch8  system_mkl25z4.o
+    0x000003f4   0x000003f4   0x0000000c   PAD
+    0x00000400   0x00000400   0x00000010   Code   RO          140    .ARM.__at_0x400     startup_mkl25z4.o
+    0x00000410   0x00000410   0x00000190   Code   RO          149    i.SystemCoreClockUpdate  system_mkl25z4.o
+    0x000005a0   0x000005a0   0x0000007c   Code   RO            8    i.UART2_IRQHandler  my_esp32_and_kl25z.o
+    0x0000061c   0x0000061c   0x00000018   Code   RO           11    i.__NVIC_ClearPendingIRQ  my_esp32_and_kl25z.o
+    0x00000634   0x00000634   0x00000078   Code   RO           12    i.__NVIC_SetPriority  my_esp32_and_kl25z.o
+    0x000006ac   0x000006ac   0x00000014   Code   RO           13    i.delay             my_esp32_and_kl25z.o
+    0x000006c0   0x000006c0   0x0000008c   Code   RO           14    i.initLED           my_esp32_and_kl25z.o
+    0x0000074c   0x0000074c   0x000000e8   Code   RO           15    i.initUART2         my_esp32_and_kl25z.o
+    0x00000834   0x00000834   0x00000090   Code   RO           17    i.main              my_esp32_and_kl25z.o
+    0x000008c4   0x000008c4   0x0000001c   Code   RO           18    i.offAllLed         my_esp32_and_kl25z.o
+    0x000008e0   0x000008e0   0x00000020   Data   RO          359    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Exec base: 0x1ffff000, Load base: 0x000007b0, Size: 0x00000004, Max: 0xffffffff, ABSOLUTE)
-
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x1ffff000   0x000007b0   0x00000004   Data   RW          101    .data               system_mkl25z4.o
-
-
-    Execution Region ER_ZI (Exec base: 0x1ffff004, Load base: 0x000007b4, Size: 0x00000164, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x1ffff000, Load base: 0x00000900, Size: 0x00000008, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x1ffff004        -       0x00000060   Zero   RW          179    .bss                c_p.l(libspace.o)
-    0x1ffff064   0x000007b4   0x00000004   PAD
-    0x1ffff068        -       0x00000000   Zero   RW           88    HEAP                startup_mkl25z4.o
-    0x1ffff068        -       0x00000100   Zero   RW           87    STACK               startup_mkl25z4.o
+    0x1ffff000   0x00000900   0x00000001   Data   RW           20    .data               my_esp32_and_kl25z.o
+    0x1ffff001   0x00000901   0x00000003   PAD
+    0x1ffff004   0x00000904   0x00000004   Data   RW          151    .data               system_mkl25z4.o
+
+
+    Execution Region ER_ZI (Exec base: 0x1ffff008, Load base: 0x00000908, Size: 0x000001b8, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x1ffff008        -       0x00000058   Zero   RW           19    .bss                my_esp32_and_kl25z.o
+    0x1ffff060        -       0x00000060   Zero   RW          232    .bss                c_p.l(libspace.o)
+    0x1ffff0c0        -       0x00000000   Zero   RW          138    HEAP                startup_mkl25z4.o
+    0x1ffff0c0        -       0x00000100   Zero   RW          137    STACK               startup_mkl25z4.o
 
 
 ==============================================================================
@@ -557,14 +592,14 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       600         48          0          0          0       8535   my_esp32_and_kl25z.o
+       930         88          0          1         88     231108   my_esp32_and_kl25z.o
         80         44        192          0        256        888   startup_mkl25z4.o
        440         42          0          4          0       1591   system_mkl25z4.o
 
     ----------------------------------------------------------------------
-      1120        134        228          4        256      11014   Object Totals
+      1462        174        224          8        344     233587   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-         0          0          4          0          0          0   (incl. Padding)
+        12          0          0          3          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -593,8 +628,8 @@ Image component sizes
          2          0          0          0          0         68   use_no_semi.o
 
     ----------------------------------------------------------------------
-       620         16          0          0        100        640   Library Totals
-         8          0          0          0          4          0   (incl. Padding)
+       618         16          0          0         96        640   Library Totals
+         6          0          0          0          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -603,7 +638,7 @@ Image component sizes
        612         16          0          0         96        640   c_p.l
 
     ----------------------------------------------------------------------
-       620         16          0          0        100        640   Library Totals
+       618         16          0          0         96        640   Library Totals
 
     ----------------------------------------------------------------------
 
@@ -612,15 +647,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      1740        150        228          4        356      11114   Grand Totals
-      1740        150        228          4        356      11114   ELF Image Totals
-      1740        150        228          4          0          0   ROM Totals
+      2080        190        224          8        440     233511   Grand Totals
+      2080        190        224          8        440     233511   ELF Image Totals
+      2080        190        224          8          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 1968 (   1.92kB)
-    Total RW  Size (RW Data + ZI Data)               360 (   0.35kB)
-    Total ROM Size (Code + RO Data + RW Data)       1972 (   1.93kB)
+    Total RO  Size (Code + RO Data)                 2304 (   2.25kB)
+    Total RW  Size (RW Data + ZI Data)               448 (   0.44kB)
+    Total ROM Size (Code + RO Data + RW Data)       2312 (   2.26kB)
 
 ==============================================================================
 
