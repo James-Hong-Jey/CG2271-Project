@@ -4,31 +4,30 @@ Component: ARM Compiler 5.06 update 6 (build 750) Tool: armlink [4d35ed]
 
 Section Cross References
 
-    my_esp32_and_kl25z.o(i.Q_Dequeue) refers to my_esp32_and_kl25z.o(i.Q_Empty) for Q_Empty
-    my_esp32_and_kl25z.o(i.Q_Enqueue) refers to my_esp32_and_kl25z.o(i.Q_Full) for Q_Full
-    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ) for __NVIC_ClearPendingIRQ
-    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.Q_Empty) for Q_Empty
-    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.Q_Dequeue) for Q_Dequeue
-    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(i.Q_Full) for Q_Full
-    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(.bss) for tx_q
-    my_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to my_esp32_and_kl25z.o(.data) for rx_IRQ_data
-    my_esp32_and_kl25z.o(i.initUART2) refers to aeabi_sdiv.o(.text) for __aeabi_uidivmod
-    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(i.__NVIC_SetPriority) for __NVIC_SetPriority
-    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ) for __NVIC_ClearPendingIRQ
-    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(i.Q_Init) for Q_Init
-    my_esp32_and_kl25z.o(i.initUART2) refers to my_esp32_and_kl25z.o(.bss) for tx_q
-    my_esp32_and_kl25z.o(i.main) refers to system_mkl25z4.o(i.SystemCoreClockUpdate) for SystemCoreClockUpdate
-    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.initLED) for initLED
-    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.initUART2) for initUART2
-    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.offAllLed) for offAllLed
-    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(i.delay) for delay
-    my_esp32_and_kl25z.o(i.main) refers to my_esp32_and_kl25z.o(.data) for rx_IRQ_data
+    controller_esp32_and_kl25z.o(i.Q_Dequeue) refers to controller_esp32_and_kl25z.o(i.Q_Empty) for Q_Empty
+    controller_esp32_and_kl25z.o(i.Q_Enqueue) refers to controller_esp32_and_kl25z.o(i.Q_Full) for Q_Full
+    controller_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to controller_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ) for __NVIC_ClearPendingIRQ
+    controller_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to controller_esp32_and_kl25z.o(i.Q_Empty) for Q_Empty
+    controller_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to controller_esp32_and_kl25z.o(i.Q_Dequeue) for Q_Dequeue
+    controller_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to controller_esp32_and_kl25z.o(i.Q_Full) for Q_Full
+    controller_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to controller_esp32_and_kl25z.o(.bss) for tx_q
+    controller_esp32_and_kl25z.o(i.UART2_IRQHandler) refers to controller_esp32_and_kl25z.o(.data) for rx_IRQ_data
+    controller_esp32_and_kl25z.o(i.initUART2) refers to aeabi_sdiv.o(.text) for __aeabi_uidivmod
+    controller_esp32_and_kl25z.o(i.initUART2) refers to controller_esp32_and_kl25z.o(i.__NVIC_SetPriority) for __NVIC_SetPriority
+    controller_esp32_and_kl25z.o(i.initUART2) refers to controller_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ) for __NVIC_ClearPendingIRQ
+    controller_esp32_and_kl25z.o(i.initUART2) refers to controller_esp32_and_kl25z.o(i.Q_Init) for Q_Init
+    controller_esp32_and_kl25z.o(i.initUART2) refers to controller_esp32_and_kl25z.o(.bss) for tx_q
+    controller_esp32_and_kl25z.o(i.main) refers to system_mkl25z4.o(i.SystemCoreClockUpdate) for SystemCoreClockUpdate
+    controller_esp32_and_kl25z.o(i.main) refers to controller_esp32_and_kl25z.o(i.initLED) for initLED
+    controller_esp32_and_kl25z.o(i.main) refers to controller_esp32_and_kl25z.o(i.initUART2) for initUART2
+    controller_esp32_and_kl25z.o(i.main) refers to controller_esp32_and_kl25z.o(i.offAllLed) for offAllLed
+    controller_esp32_and_kl25z.o(i.main) refers to controller_esp32_and_kl25z.o(.data) for rx_IRQ_data
     startup_mkl25z4.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(RESET) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(RESET) refers to startup_mkl25z4.o(STACK) for __initial_sp
     startup_mkl25z4.o(RESET) refers to startup_mkl25z4.o(.text) for Reset_Handler
-    startup_mkl25z4.o(RESET) refers to my_esp32_and_kl25z.o(i.UART2_IRQHandler) for UART2_IRQHandler
+    startup_mkl25z4.o(RESET) refers to controller_esp32_and_kl25z.o(i.UART2_IRQHandler) for UART2_IRQHandler
     startup_mkl25z4.o(.ARM.__at_0x400) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(.text) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_mkl25z4.o(.text) refers to system_mkl25z4.o(i.SystemInit) for SystemInit
@@ -49,7 +48,7 @@ Section Cross References
     __rtentry2.o(.ARM.Collect$$rtentry$$00000008) refers to boardinit2.o(.text) for _platform_post_stackheap_init
     __rtentry2.o(.ARM.Collect$$rtentry$$0000000A) refers to libinit.o(.ARM.Collect$$libinit$$00000000) for __rt_lib_init
     __rtentry2.o(.ARM.Collect$$rtentry$$0000000B) refers to boardinit3.o(.text) for _platform_post_lib_init
-    __rtentry2.o(.ARM.Collect$$rtentry$$0000000D) refers to my_esp32_and_kl25z.o(i.main) for main
+    __rtentry2.o(.ARM.Collect$$rtentry$$0000000D) refers to controller_esp32_and_kl25z.o(i.main) for main
     __rtentry2.o(.ARM.Collect$$rtentry$$0000000D) refers to exit.o(.text) for exit
     __rtentry2.o(.ARM.exidx) refers to __rtentry2.o(.ARM.Collect$$rtentry$$00000001) for .ARM.Collect$$rtentry$$00000001
     __rtentry2.o(.ARM.exidx) refers to __rtentry2.o(.ARM.Collect$$rtentry$$00000008) for .ARM.Collect$$rtentry$$00000008
@@ -149,16 +148,17 @@ Section Cross References
 
 Removing Unused input sections from the image.
 
-    Removing my_esp32_and_kl25z.o(.rev16_text), (4 bytes).
-    Removing my_esp32_and_kl25z.o(.revsh_text), (4 bytes).
-    Removing my_esp32_and_kl25z.o(i.Q_Enqueue), (46 bytes).
-    Removing my_esp32_and_kl25z.o(i.UART2_Receive_Poll), (24 bytes).
-    Removing my_esp32_and_kl25z.o(i.UART2_Transmit_Poll), (24 bytes).
-    Removing my_esp32_and_kl25z.o(i.ledControl), (88 bytes).
+    Removing controller_esp32_and_kl25z.o(.rev16_text), (4 bytes).
+    Removing controller_esp32_and_kl25z.o(.revsh_text), (4 bytes).
+    Removing controller_esp32_and_kl25z.o(i.Q_Enqueue), (46 bytes).
+    Removing controller_esp32_and_kl25z.o(i.UART2_Receive_Poll), (24 bytes).
+    Removing controller_esp32_and_kl25z.o(i.UART2_Transmit_Poll), (24 bytes).
+    Removing controller_esp32_and_kl25z.o(i.delay), (20 bytes).
+    Removing controller_esp32_and_kl25z.o(i.ledControl), (88 bytes).
     Removing system_mkl25z4.o(.rev16_text), (4 bytes).
     Removing system_mkl25z4.o(.revsh_text), (4 bytes).
 
-8 unused section(s) (total 198 bytes) removed from the image.
+9 unused section(s) (total 218 bytes) removed from the image.
 
 ==============================================================================
 
@@ -169,67 +169,67 @@ Image Symbol Table
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
     RESET                                    0x00000000   Section      192  startup_mkl25z4.o(RESET)
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_zi.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_copy.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry2.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
+    ../clib/angel/rt.s                       0x00000000   Number         0  aeabi_idiv0.o ABSOLUTE
+    ../clib/angel/rt.s                       0x00000000   Number         0  rt_raise.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  aeabi_idiv0_sigfpe.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  rt_div0.o ABSOLUTE
-    ../clib/angel/rt.s                       0x00000000   Number         0  rt_raise.o ABSOLUTE
-    ../clib/angel/rt.s                       0x00000000   Number         0  aeabi_idiv0.o ABSOLUTE
     ../clib/angel/scatterp.s                 0x00000000   Number         0  __scatter.o ABSOLUTE
     ../clib/angel/startup.s                  0x00000000   Number         0  __main.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  tempstk.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  libspace.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  tempstk.o ABSOLUTE
-    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_wrch.o ABSOLUTE
-    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_command.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_exit.o ABSOLUTE
-    ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
+    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_command.o ABSOLUTE
+    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_wrch.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  no_argv.o ABSOLUTE
+    ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
-    ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv.o ABSOLUTE
     ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv_div0.o ABSOLUTE
+    ../clib/division.s                       0x00000000   Number         0  aeabi_sdiv.o ABSOLUTE
     ../clib/heapalloc.c                      0x00000000   Number         0  hrguard.o ABSOLUTE
     ../clib/heapaux.c                        0x00000000   Number         0  heapauxi.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libinit2.o ABSOLUTE
+    ../clib/libinit.s                        0x00000000   Number         0  libshutdown2.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libshutdown.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
-    ../clib/libinit.s                        0x00000000   Number         0  libshutdown2.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_exit.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  __raise.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_outer.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_formal.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_exit.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  __raise.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
     ../clib/signal.s                         0x00000000   Number         0  defsig.o ABSOLUTE
     ../clib/stdlib.c                         0x00000000   Number         0  exit.o ABSOLUTE
     ../fplib/cfplib/fpinit.c                 0x00000000   Number         0  fpinit.o ABSOLUTE
     RTE\Device\MKL25Z128xxx4\startup_MKL25Z4.s 0x00000000   Number         0  startup_mkl25z4.o ABSOLUTE
     RTE\Device\MKL25Z128xxx4\system_MKL25Z4.c 0x00000000   Number         0  system_mkl25z4.o ABSOLUTE
     RTE\\Device\\MKL25Z128xxx4\\system_MKL25Z4.c 0x00000000   Number         0  system_mkl25z4.o ABSOLUTE
+    controller_ESP32_and_KL25Z.c             0x00000000   Number         0  controller_esp32_and_kl25z.o ABSOLUTE
+    controller_ESP32_and_KL25Z.c             0x00000000   Number         0  controller_esp32_and_kl25z.o ABSOLUTE
     dc.s                                     0x00000000   Number         0  dc.o ABSOLUTE
-    my_ESP32_and_KL25Z.c                     0x00000000   Number         0  my_esp32_and_kl25z.o ABSOLUTE
-    my_ESP32_and_KL25Z.c                     0x00000000   Number         0  my_esp32_and_kl25z.o ABSOLUTE
     !!!main                                  0x000000c0   Section        8  __main.o(!!!main)
     !!!scatter                               0x000000c8   Section       60  __scatter.o(!!!scatter)
     !!handler_copy                           0x00000104   Section       26  __scatter_copy.o(!!handler_copy)
@@ -284,28 +284,26 @@ Image Symbol Table
     .text                                    0x0000035c   Section        0  sys_exit.o(.text)
     .text                                    0x00000368   Section        2  use_no_semi.o(.text)
     .text                                    0x0000036a   Section        0  indicate_semi.o(.text)
-    i.Q_Dequeue                              0x0000036a   Section        0  my_esp32_and_kl25z.o(i.Q_Dequeue)
-    i.Q_Empty                                0x0000039c   Section        0  my_esp32_and_kl25z.o(i.Q_Empty)
-    i.Q_Full                                 0x000003a4   Section        0  my_esp32_and_kl25z.o(i.Q_Full)
-    i.Q_Init                                 0x000003b4   Section        0  my_esp32_and_kl25z.o(i.Q_Init)
+    i.Q_Dequeue                              0x0000036a   Section        0  controller_esp32_and_kl25z.o(i.Q_Dequeue)
+    i.Q_Empty                                0x0000039c   Section        0  controller_esp32_and_kl25z.o(i.Q_Empty)
+    i.Q_Full                                 0x000003a4   Section        0  controller_esp32_and_kl25z.o(i.Q_Full)
+    i.Q_Init                                 0x000003b4   Section        0  controller_esp32_and_kl25z.o(i.Q_Init)
     i.SystemInit                             0x000003cc   Section        0  system_mkl25z4.o(i.SystemInit)
     i.__ARM_common_switch8                   0x000003d8   Section        0  system_mkl25z4.o(i.__ARM_common_switch8)
     .ARM.__at_0x400                          0x00000400   Section       16  startup_mkl25z4.o(.ARM.__at_0x400)
     i.SystemCoreClockUpdate                  0x00000410   Section        0  system_mkl25z4.o(i.SystemCoreClockUpdate)
-    i.UART2_IRQHandler                       0x000005a0   Section        0  my_esp32_and_kl25z.o(i.UART2_IRQHandler)
-    i.__NVIC_ClearPendingIRQ                 0x0000061c   Section        0  my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ)
-    __NVIC_ClearPendingIRQ                   0x0000061d   Thumb Code    18  my_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ)
-    i.__NVIC_SetPriority                     0x00000634   Section        0  my_esp32_and_kl25z.o(i.__NVIC_SetPriority)
-    __NVIC_SetPriority                       0x00000635   Thumb Code   110  my_esp32_and_kl25z.o(i.__NVIC_SetPriority)
-    i.delay                                  0x000006ac   Section        0  my_esp32_and_kl25z.o(i.delay)
-    delay                                    0x000006ad   Thumb Code    20  my_esp32_and_kl25z.o(i.delay)
-    i.initLED                                0x000006c0   Section        0  my_esp32_and_kl25z.o(i.initLED)
-    i.initUART2                              0x0000074c   Section        0  my_esp32_and_kl25z.o(i.initUART2)
-    i.main                                   0x00000834   Section        0  my_esp32_and_kl25z.o(i.main)
-    i.offAllLed                              0x000008c4   Section        0  my_esp32_and_kl25z.o(i.offAllLed)
-    .data                                    0x1ffff000   Section        1  my_esp32_and_kl25z.o(.data)
+    i.UART2_IRQHandler                       0x000005a0   Section        0  controller_esp32_and_kl25z.o(i.UART2_IRQHandler)
+    i.__NVIC_ClearPendingIRQ                 0x0000061c   Section        0  controller_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ)
+    __NVIC_ClearPendingIRQ                   0x0000061d   Thumb Code    18  controller_esp32_and_kl25z.o(i.__NVIC_ClearPendingIRQ)
+    i.__NVIC_SetPriority                     0x00000634   Section        0  controller_esp32_and_kl25z.o(i.__NVIC_SetPriority)
+    __NVIC_SetPriority                       0x00000635   Thumb Code   110  controller_esp32_and_kl25z.o(i.__NVIC_SetPriority)
+    i.initLED                                0x000006ac   Section        0  controller_esp32_and_kl25z.o(i.initLED)
+    i.initUART2                              0x00000738   Section        0  controller_esp32_and_kl25z.o(i.initUART2)
+    i.main                                   0x00000820   Section        0  controller_esp32_and_kl25z.o(i.main)
+    i.offAllLed                              0x00000888   Section        0  controller_esp32_and_kl25z.o(i.offAllLed)
+    .data                                    0x1ffff000   Section        1  controller_esp32_and_kl25z.o(.data)
     .data                                    0x1ffff004   Section        4  system_mkl25z4.o(.data)
-    .bss                                     0x1ffff008   Section       88  my_esp32_and_kl25z.o(.bss)
+    .bss                                     0x1ffff008   Section       88  controller_esp32_and_kl25z.o(.bss)
     .bss                                     0x1ffff060   Section       96  libspace.o(.bss)
     HEAP                                     0x1ffff0c0   Section        0  startup_mkl25z4.o(HEAP)
     STACK                                    0x1ffff0c0   Section      256  startup_mkl25z4.o(STACK)
@@ -318,7 +316,7 @@ Image Symbol Table
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
     BuildAttributes$$THM_ISAv3M$S$PE$A:L22$X:L11$S22$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$ROPI$EBA8$UX$STANDARDLIB$REQ8$PRES8$EABIv2 0x00000000   Number         0  anon$$obj.o ABSOLUTE
-    __ARM_use_no_argv                        0x00000000   Number         0  my_esp32_and_kl25z.o ABSOLUTE
+    __ARM_use_no_argv                        0x00000000   Number         0  controller_esp32_and_kl25z.o ABSOLUTE
     __Vectors                                0x00000000   Data           4  startup_mkl25z4.o(RESET)
     __ARM_exceptions_init                     - Undefined Weak Reference
     __alloca_initialize                       - Undefined Weak Reference
@@ -452,25 +450,25 @@ Image Symbol Table
     _sys_exit                                0x0000035d   Thumb Code     8  sys_exit.o(.text)
     __I$use$semihosting                      0x00000369   Thumb Code     0  use_no_semi.o(.text)
     __use_no_semihosting_swi                 0x00000369   Thumb Code     2  use_no_semi.o(.text)
-    Q_Dequeue                                0x0000036b   Thumb Code    50  my_esp32_and_kl25z.o(i.Q_Dequeue)
+    Q_Dequeue                                0x0000036b   Thumb Code    50  controller_esp32_and_kl25z.o(i.Q_Dequeue)
     __semihosting_library_function           0x0000036b   Thumb Code     0  indicate_semi.o(.text)
-    Q_Empty                                  0x0000039d   Thumb Code     8  my_esp32_and_kl25z.o(i.Q_Empty)
-    Q_Full                                   0x000003a5   Thumb Code    16  my_esp32_and_kl25z.o(i.Q_Full)
-    Q_Init                                   0x000003b5   Thumb Code    24  my_esp32_and_kl25z.o(i.Q_Init)
+    Q_Empty                                  0x0000039d   Thumb Code     8  controller_esp32_and_kl25z.o(i.Q_Empty)
+    Q_Full                                   0x000003a5   Thumb Code    16  controller_esp32_and_kl25z.o(i.Q_Full)
+    Q_Init                                   0x000003b5   Thumb Code    24  controller_esp32_and_kl25z.o(i.Q_Init)
     SystemInit                               0x000003cd   Thumb Code     8  system_mkl25z4.o(i.SystemInit)
     __ARM_common_switch8                     0x000003d9   Thumb Code    28  system_mkl25z4.o(i.__ARM_common_switch8)
     SystemCoreClockUpdate                    0x00000411   Thumb Code   372  system_mkl25z4.o(i.SystemCoreClockUpdate)
-    UART2_IRQHandler                         0x000005a1   Thumb Code   106  my_esp32_and_kl25z.o(i.UART2_IRQHandler)
-    initLED                                  0x000006c1   Thumb Code   124  my_esp32_and_kl25z.o(i.initLED)
-    initUART2                                0x0000074d   Thumb Code   208  my_esp32_and_kl25z.o(i.initUART2)
-    main                                     0x00000835   Thumb Code   136  my_esp32_and_kl25z.o(i.main)
-    offAllLed                                0x000008c5   Thumb Code    22  my_esp32_and_kl25z.o(i.offAllLed)
-    Region$$Table$$Base                      0x000008e0   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x00000900   Number         0  anon$$obj.o(Region$$Table)
-    rx_IRQ_data                              0x1ffff000   Data           1  my_esp32_and_kl25z.o(.data)
+    UART2_IRQHandler                         0x000005a1   Thumb Code   106  controller_esp32_and_kl25z.o(i.UART2_IRQHandler)
+    initLED                                  0x000006ad   Thumb Code   124  controller_esp32_and_kl25z.o(i.initLED)
+    initUART2                                0x00000739   Thumb Code   208  controller_esp32_and_kl25z.o(i.initUART2)
+    main                                     0x00000821   Thumb Code    94  controller_esp32_and_kl25z.o(i.main)
+    offAllLed                                0x00000889   Thumb Code    22  controller_esp32_and_kl25z.o(i.offAllLed)
+    Region$$Table$$Base                      0x000008a4   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x000008c4   Number         0  anon$$obj.o(Region$$Table)
+    rx_IRQ_data                              0x1ffff000   Data           1  controller_esp32_and_kl25z.o(.data)
     SystemCoreClock                          0x1ffff004   Data           4  system_mkl25z4.o(.data)
-    tx_q                                     0x1ffff008   Data          44  my_esp32_and_kl25z.o(.bss)
-    rx_q                                     0x1ffff034   Data          44  my_esp32_and_kl25z.o(.bss)
+    tx_q                                     0x1ffff008   Data          44  controller_esp32_and_kl25z.o(.bss)
+    rx_q                                     0x1ffff034   Data          44  controller_esp32_and_kl25z.o(.bss)
     __libspace_start                         0x1ffff060   Data          96  libspace.o(.bss)
     __temporary_stack_top$libspace           0x1ffff0c0   Data           0  libspace.o(.bss)
 
@@ -482,9 +480,9 @@ Memory Map of the image
 
   Image Entry point : 0x00000165
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x00000908, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x000008cc, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00000900, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x000008c4, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -546,40 +544,39 @@ Memory Map of the image
     0x0000035c   0x0000035c   0x0000000c   Code   RO          288    .text               c_p.l(sys_exit.o)
     0x00000368   0x00000368   0x00000002   Code   RO          307    .text               c_p.l(use_no_semi.o)
     0x0000036a   0x0000036a   0x00000000   Code   RO          309    .text               c_p.l(indicate_semi.o)
-    0x0000036a   0x0000036a   0x00000032   Code   RO            3    i.Q_Dequeue         my_esp32_and_kl25z.o
-    0x0000039c   0x0000039c   0x00000008   Code   RO            4    i.Q_Empty           my_esp32_and_kl25z.o
-    0x000003a4   0x000003a4   0x00000010   Code   RO            6    i.Q_Full            my_esp32_and_kl25z.o
-    0x000003b4   0x000003b4   0x00000018   Code   RO            7    i.Q_Init            my_esp32_and_kl25z.o
+    0x0000036a   0x0000036a   0x00000032   Code   RO            3    i.Q_Dequeue         controller_esp32_and_kl25z.o
+    0x0000039c   0x0000039c   0x00000008   Code   RO            4    i.Q_Empty           controller_esp32_and_kl25z.o
+    0x000003a4   0x000003a4   0x00000010   Code   RO            6    i.Q_Full            controller_esp32_and_kl25z.o
+    0x000003b4   0x000003b4   0x00000018   Code   RO            7    i.Q_Init            controller_esp32_and_kl25z.o
     0x000003cc   0x000003cc   0x0000000c   Code   RO          150    i.SystemInit        system_mkl25z4.o
     0x000003d8   0x000003d8   0x0000001c   Code   RO          173    i.__ARM_common_switch8  system_mkl25z4.o
     0x000003f4   0x000003f4   0x0000000c   PAD
     0x00000400   0x00000400   0x00000010   Code   RO          140    .ARM.__at_0x400     startup_mkl25z4.o
     0x00000410   0x00000410   0x00000190   Code   RO          149    i.SystemCoreClockUpdate  system_mkl25z4.o
-    0x000005a0   0x000005a0   0x0000007c   Code   RO            8    i.UART2_IRQHandler  my_esp32_and_kl25z.o
-    0x0000061c   0x0000061c   0x00000018   Code   RO           11    i.__NVIC_ClearPendingIRQ  my_esp32_and_kl25z.o
-    0x00000634   0x00000634   0x00000078   Code   RO           12    i.__NVIC_SetPriority  my_esp32_and_kl25z.o
-    0x000006ac   0x000006ac   0x00000014   Code   RO           13    i.delay             my_esp32_and_kl25z.o
-    0x000006c0   0x000006c0   0x0000008c   Code   RO           14    i.initLED           my_esp32_and_kl25z.o
-    0x0000074c   0x0000074c   0x000000e8   Code   RO           15    i.initUART2         my_esp32_and_kl25z.o
-    0x00000834   0x00000834   0x00000090   Code   RO           17    i.main              my_esp32_and_kl25z.o
-    0x000008c4   0x000008c4   0x0000001c   Code   RO           18    i.offAllLed         my_esp32_and_kl25z.o
-    0x000008e0   0x000008e0   0x00000020   Data   RO          359    Region$$Table       anon$$obj.o
+    0x000005a0   0x000005a0   0x0000007c   Code   RO            8    i.UART2_IRQHandler  controller_esp32_and_kl25z.o
+    0x0000061c   0x0000061c   0x00000018   Code   RO           11    i.__NVIC_ClearPendingIRQ  controller_esp32_and_kl25z.o
+    0x00000634   0x00000634   0x00000078   Code   RO           12    i.__NVIC_SetPriority  controller_esp32_and_kl25z.o
+    0x000006ac   0x000006ac   0x0000008c   Code   RO           14    i.initLED           controller_esp32_and_kl25z.o
+    0x00000738   0x00000738   0x000000e8   Code   RO           15    i.initUART2         controller_esp32_and_kl25z.o
+    0x00000820   0x00000820   0x00000068   Code   RO           17    i.main              controller_esp32_and_kl25z.o
+    0x00000888   0x00000888   0x0000001c   Code   RO           18    i.offAllLed         controller_esp32_and_kl25z.o
+    0x000008a4   0x000008a4   0x00000020   Data   RO          359    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Exec base: 0x1ffff000, Load base: 0x00000900, Size: 0x00000008, Max: 0xffffffff, ABSOLUTE)
-
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x1ffff000   0x00000900   0x00000001   Data   RW           20    .data               my_esp32_and_kl25z.o
-    0x1ffff001   0x00000901   0x00000003   PAD
-    0x1ffff004   0x00000904   0x00000004   Data   RW          151    .data               system_mkl25z4.o
-
-
-    Execution Region ER_ZI (Exec base: 0x1ffff008, Load base: 0x00000908, Size: 0x000001b8, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x1ffff000, Load base: 0x000008c4, Size: 0x00000008, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x1ffff008        -       0x00000058   Zero   RW           19    .bss                my_esp32_and_kl25z.o
+    0x1ffff000   0x000008c4   0x00000001   Data   RW           20    .data               controller_esp32_and_kl25z.o
+    0x1ffff001   0x000008c5   0x00000003   PAD
+    0x1ffff004   0x000008c8   0x00000004   Data   RW          151    .data               system_mkl25z4.o
+
+
+    Execution Region ER_ZI (Exec base: 0x1ffff008, Load base: 0x000008cc, Size: 0x000001b8, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x1ffff008        -       0x00000058   Zero   RW           19    .bss                controller_esp32_and_kl25z.o
     0x1ffff060        -       0x00000060   Zero   RW          232    .bss                c_p.l(libspace.o)
     0x1ffff0c0        -       0x00000000   Zero   RW          138    HEAP                startup_mkl25z4.o
     0x1ffff0c0        -       0x00000100   Zero   RW          137    STACK               startup_mkl25z4.o
@@ -592,12 +589,12 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       930         88          0          1         88     231108   my_esp32_and_kl25z.o
+       870         90          0          1         88     230932   controller_esp32_and_kl25z.o
         80         44        192          0        256        888   startup_mkl25z4.o
        440         42          0          4          0       1591   system_mkl25z4.o
 
     ----------------------------------------------------------------------
-      1462        174        224          8        344     233587   Object Totals
+      1402        176        224          8        344     233411   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         12          0          0          3          0          0   (incl. Padding)
 
@@ -647,15 +644,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      2080        190        224          8        440     233511   Grand Totals
-      2080        190        224          8        440     233511   ELF Image Totals
-      2080        190        224          8          0          0   ROM Totals
+      2020        192        224          8        440     233379   Grand Totals
+      2020        192        224          8        440     233379   ELF Image Totals
+      2020        192        224          8          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 2304 (   2.25kB)
+    Total RO  Size (Code + RO Data)                 2244 (   2.19kB)
     Total RW  Size (RW Data + ZI Data)               448 (   0.44kB)
-    Total ROM Size (Code + RO Data + RW Data)       2312 (   2.26kB)
+    Total ROM Size (Code + RO Data + RW Data)       2252 (   2.20kB)
 
 ==============================================================================
 

@@ -1,18 +1,5 @@
 #include <Bluepad32.h>
 
-// REQUIRES bluepad + esp32 library
-// https://bluepad32.readthedocs.io/en/latest/plat_arduino/ 
-
-#define RXD2 16
-#define TXD2 17
-
-// Auxiliar variables to store the current output state
-String output26State = "off";
-
-// Assign output variables to GPIO pins
-const int output26 = 26;
-const int output25 = 25;
-
 ControllerPtr myControllers[BP32_MAX_GAMEPADS];
 
 // This callback gets called any time a new gamepad is connected.
@@ -77,6 +64,32 @@ void dumpGamepad(ControllerPtr ctl) {
     );
 }
 
+void dumpMouse(ControllerPtr ctl) {
+    Serial.printf("idx=%d, buttons: 0x%04x, scrollWheel=0x%04x, delta X: %4d, delta Y: %4d\n",
+                   ctl->index(),        // Controller Index
+                   ctl->buttons(),      // bitmask of pressed buttons
+                   ctl->scrollWheel(),  // Scroll Wheel
+                   ctl->deltaX(),       // (-511 - 512) left X Axis
+                   ctl->deltaY()        // (-511 - 512) left Y axis
+    );
+}
+
+void dumpKeyboard(ControllerPtr ctl) {
+    // TODO: Print pressed keys
+    Serial.printf("idx=%d\n", ctl->index());
+}
+
+void dumpBalanceBoard(ControllerPtr ctl) {
+    Serial.printf("idx=%d,  TL=%u, TR=%u, BL=%u, BR=%u, temperature=%d\n",
+                   ctl->index(),        // Controller Index
+                   ctl->topLeft(),      // top-left scale
+                   ctl->topRight(),     // top-right scale
+                   ctl->bottomLeft(),   // bottom-left scale
+                   ctl->bottomRight(),  // bottom-right scale
+                   ctl->temperature()   // temperature: used to adjust the scale value's precision
+    );
+}
+
 void processGamepad(ControllerPtr ctl) {
     // There are different ways to query whether a button is pressed.
     // By query each button individually:
@@ -127,11 +140,64 @@ void processGamepad(ControllerPtr ctl) {
     dumpGamepad(ctl);
 }
 
+void processMouse(ControllerPtr ctl) {
+    // This is just an example.
+    if (ctl->scrollWheel() > 0) {
+        // Do Something
+    } else if (ctl->scrollWheel() < 0) {
+        // Do something else
+    }
+
+    // See "dumpMouse" for possible things to query.
+    dumpMouse(ctl);
+}
+
+void processKeyboard(ControllerPtr ctl) {
+    // This is just an example.
+    if (ctl->isKeyPressed(Keyboard_A)) {
+        // Do Something
+        Serial.println("Key 'A' pressed");
+    }
+
+    // Don't do "else" here.
+    // Multiple keys can be pressed at the same time.
+    if (ctl->isKeyPressed(Keyboard_LeftShift)) {
+        // Do something else
+        Serial.println("Key 'LEFT SHIFT' pressed");
+    }
+
+    // Don't do "else" here.
+    // Multiple keys can be pressed at the same time.
+    if (ctl->isKeyPressed(Keyboard_LeftArrow)) {
+        // Do something else
+        Serial.println("Key 'Left Arrow' pressed");
+    }
+
+    // See "dumpKeyboard" for possible things to query.
+    dumpKeyboard(ctl);
+}
+
+void processBalanceBoard(ControllerPtr ctl) {
+    // This is just an example.
+    if (ctl->topLeft() > 10000) {
+        // Do Something
+    }
+
+    // See "dumpBalanceBoard" for possible things to query.
+    dumpBalanceBoard(ctl);
+}
+
 void processControllers() {
     for (auto myController : myControllers) {
         if (myController && myController->isConnected() && myController->hasData()) {
             if (myController->isGamepad()) {
                 processGamepad(myController);
+            } else if (myController->isMouse()) {
+                processMouse(myController);
+            } else if (myController->isKeyboard()) {
+                processKeyboard(myController);
+            } else if (myController->isBalanceBoard()) {
+                processBalanceBoard(myController);
             } else {
                 Serial.println("Unsupported controller");
             }
@@ -145,13 +211,6 @@ void setup() {
     Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
     const uint8_t* addr = BP32.localBdAddress();
     Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
-
-    // Serial to the KL25Z board
-    Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
-    // Initialize the output variables as outputs
-    pinMode(output26, OUTPUT);
-    // Set outputs to LOW
-    digitalWrite(output26, LOW);
 
     // Setup the Bluepad32 callbacks
     BP32.setup(&onConnectedController, &onDisconnectedController);
@@ -178,15 +237,6 @@ void loop() {
     bool dataUpdated = BP32.update();
     if (dataUpdated)
         processControllers();
-
-    // Serial information
-    // Yaxis is a number from -511 to 512 based on left or right tilt stick
-    // Therefore I convert both to unsigned 16 bit integers then combine
-    // So the Most Significant 16 bits are LEFT, Least Significant 16 bits are RIGHT
-    uint16_t leftYAxis = myControllers[0]->axisY() + 511; 
-    uint16_t rightYAxis = myControllers[0]->axisRY() + 511;  
-    uint32_t dataPacket = (leftYAxis << 16) | (rightYAxis);
-    Serial2.write(dataPacket);
 
     // The main loop must have some kind of "yield to lower priority task" event.
     // Otherwise, the watchdog will get triggered.

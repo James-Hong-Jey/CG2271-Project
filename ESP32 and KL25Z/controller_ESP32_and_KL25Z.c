@@ -26,8 +26,8 @@ typedef struct {
 } Q_T;
 
 Q_T tx_q, rx_q;
-// volatile uint8_t rx_IRQ_data = 0;
-volatile uint32_t rx_IRQ_data = 0;
+volatile uint8_t rx_IRQ_data = 0x00;
+// volatile uint32_t rx_IRQ_data = 0;
 
 void Q_Init(Q_T *q) {
 	unsigned int i;
@@ -211,27 +211,44 @@ int main(void) {
 
 	while (1) {
 		offAllLed(); // With this here it will just blink for 0x80000 
-		// LEFT is MS 16 bits, RIGHT is LS 16 bits, range of (-511 to 512) + 511, 
-		// therefore left == 511 -> actual stick is at 0
-		uint16_t left = rx_IRQ_data >> 16;
-		uint16_t right = rx_IRQ_data;
+		// LEFT is MS 16 bits, RIGHT is LS 16 bits, range of (-511 to 512) + 512, 
+		// therefore left == 512 -> actual stick is at 0
+		// left == 1024 -> stick is all the way down
+		// left == 0 -> stick is all the way up
+		uint8_t left = (rx_IRQ_data >> 4);
+		uint8_t right = rx_IRQ_data & 0x0F;
 
 		//IRQ Mode
-		if(left > 512) { // Left Forward
+		if (rx_IRQ_data == 0x31) { // ON Red LED
+			PTB->PCOR = MASK(RED_LED); // TEST
+		} else if(right > 4) { // Left Forward
 			PTB->PCOR = MASK(GREEN_LED); // JUST TO TEST
-			delay(0x80000);
-		} else if (left == 511) { // Left not moving
+		} else if (left <= 3) { // Left not moving
 			PTD->PCOR = MASK(BLUE_LED); // JUST TO TEST
-			delay(0x80000);
-		} else { // Left Backwards
-			PTB->PCOR = MASK(RED_LED); // JUST TO TEST
-			delay(0x80000);
+		} else { 
+			offAllLed();
 		}
 
-		if(right > 512) { // Right Forward
-		} else if (right == 511) { // Right not moving
-		} else { // Right Backwards
-		}
+		// if(right > 512) { // Right Forward
+		// } else if (right == 511) { // Right not moving
+		// } else { // Right Backwards
+		// }
 
+		// if (rx_IRQ_data == 0x30) { // OFF Red LED
+		// 	PTB->PSOR = MASK(RED_LED);
+		// 	delay(0x80000);
+		// } else if (rx_IRQ_data == 0x31) { // ON Red LED
+		// 	PTB->PCOR = MASK(RED_LED);
+		// 	delay(0x80000);
+		// } else if (rx_IRQ_data == 0x32) { // OFF Green LED
+		// 	PTB->PSOR = MASK(GREEN_LED);
+		// 	delay(0x80000);
+		// } else if (rx_IRQ_data == 0x33) { // ON Green LED
+		// 	PTB->PCOR = MASK(GREEN_LED);
+		// 	delay(0x80000);
+		// } else {
+		// 	PTD->PCOR = MASK(BLUE_LED);
+		// 	delay(0x80000);
+		// }
 	}
 }
