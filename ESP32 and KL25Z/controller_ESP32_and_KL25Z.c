@@ -12,6 +12,9 @@
 
 #define Q_SIZE 32
 
+#define FORWARD 1
+#define BACKWARDS 0
+
 typedef enum {
   led_on,
   led_off
@@ -194,15 +197,26 @@ int main(void) {
 		uint8_t left = (rx_IRQ_data >> 4);
 		uint8_t right = rx_IRQ_data & 0x0F;
 
-		//IRQ Mode
-		if (rx_IRQ_data == 0x31) { // ON Red LED
-			PTB->PCOR = MASK(RED_LED); // TEST
-		} else if(left > 8) { // LEFT DOWN
-			PTB->PCOR = MASK(GREEN_LED); // JUST TO TEST
-		} else if (right < 7) { // RIGHT UP
-			PTD->PCOR = MASK(BLUE_LED); // JUST TO TEST
-		} else { 
-			offAllLed();
-		}
+		// Direction (FORWARD == 1) 
+		uint8_t leftDir = left - 8 > 0 ? FORWARD : BACKWARDS;
+		// Magnitude from 0 to 7
+		uint8_t leftMag = left - 8 > 0 ? left - 8 : 8 - left;
+
+		// Direction (FORWARD == 1) 
+		uint8_t rightDir = right - 8 > 0 ? FORWARD : BACKWARDS;
+		// Magnitude from 0 to 7
+		uint8_t rightMag = right - 8 > 0 ? left - 8 : 8 - left;
+
+
+		// FOR TESTING
+		// if (rx_IRQ_data == 0x31) { // ON Red LED
+		// 	PTB->PCOR = MASK(RED_LED); // TEST
+		// } else if(left > 8) { // LEFT DOWN
+		// 	PTB->PCOR = MASK(GREEN_LED); // JUST TO TEST
+		// } else if (right < 7) { // RIGHT UP
+		// 	PTD->PCOR = MASK(BLUE_LED); // JUST TO TEST
+		// } else { 
+		// 	offAllLed();
+		// }
 	}
 }
