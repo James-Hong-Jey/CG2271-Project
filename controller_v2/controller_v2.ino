@@ -1,4 +1,6 @@
 #include <Bluepad32.h>
+// REQUIRES bluepad + esp32 library
+// https://bluepad32.readthedocs.io/en/latest/plat_arduino/ 
 
 #define RXD2 16
 #define TXD2 17
@@ -68,36 +70,10 @@ void dumpGamepad(ControllerPtr ctl) {
     );
 }
 
-void dumpMouse(ControllerPtr ctl) {
-    Serial.printf("idx=%d, buttons: 0x%04x, scrollWheel=0x%04x, delta X: %4d, delta Y: %4d\n",
-                   ctl->index(),        // Controller Index
-                   ctl->buttons(),      // bitmask of pressed buttons
-                   ctl->scrollWheel(),  // Scroll Wheel
-                   ctl->deltaX(),       // (-511 - 512) left X Axis
-                   ctl->deltaY()        // (-511 - 512) left Y axis
-    );
-}
-
-void dumpKeyboard(ControllerPtr ctl) {
-    // TODO: Print pressed keys
-    Serial.printf("idx=%d\n", ctl->index());
-}
-
-void dumpBalanceBoard(ControllerPtr ctl) {
-    Serial.printf("idx=%d,  TL=%u, TR=%u, BL=%u, BR=%u, temperature=%d\n",
-                   ctl->index(),        // Controller Index
-                   ctl->topLeft(),      // top-left scale
-                   ctl->topRight(),     // top-right scale
-                   ctl->bottomLeft(),   // bottom-left scale
-                   ctl->bottomRight(),  // bottom-right scale
-                   ctl->temperature()   // temperature: used to adjust the scale value's precision
-    );
-}
-
 void sendSerial(ControllerPtr ctl) {
     long leftYAxis = ctl->axisY() + 512; // max 11 bit number
     long rightYAxis = ctl->axisRY() + 512; // max 11 bit number
-    uint8_t dataPacket = ((leftYAxis >> 7) << 4) | (rightYAxis >> 7);
+    uint8_t dataPacket = ((leftYAxis >> 6) << 4) | (rightYAxis >> 6);
     // uint32_t dataPacket = (leftYAxis << 15) | (rightYAxis);
     Serial.printf("left: %d, right: %d, packet: %X \n", leftYAxis, rightYAxis, dataPacket);
     if(ctl->buttons() != 0) {
@@ -108,102 +84,9 @@ void sendSerial(ControllerPtr ctl) {
 }
 
 void processGamepad(ControllerPtr ctl) {
-    // There are different ways to query whether a button is pressed.
-    // By query each button individually:
-    //  a(), b(), x(), y(), l1(), etc...
-    digitalWrite(LED, HIGH);
-    if (ctl->a()) {
-        static int colorIdx = 0;
-        // Some gamepads like DS4 and DualSense support changing the color LED.
-        // It is possible to change it by calling:
-        switch (colorIdx % 3) {
-            case 0:
-                // Red
-                ctl->setColorLED(255, 0, 0); 
-                break;
-            case 1:
-                // Green
-                ctl->setColorLED(0, 255, 0);
-                break;
-            case 2:
-                // Blue
-                ctl->setColorLED(0, 0, 255);
-                break;
-        }
-        colorIdx++;
-    }
-
-    if (ctl->b()) {
-        // Turn on the 4 LED. Each bit represents one LED.
-        static int led = 0;
-        led++;
-        // Some gamepads like the DS3, DualSense, Nintendo Wii, Nintendo Switch
-        // support changing the "Player LEDs": those 4 LEDs that usually indicate
-        // the "gamepad seat".
-        // It is possible to change them by calling:
-        ctl->setPlayerLEDs(led & 0x0f);
-    }
-
-    if (ctl->x()) {
-        // Duration: 255 is ~2 seconds
-        // force: intensity
-        // Some gamepads like DS3, DS4, DualSense, Switch, Xbox One S support
-        // rumble.
-        // It is possible to set it by calling:
-        ctl->setRumble(0xc0 /* force */, 0xc0 /* duration */);
-    }
-
-    // Another way to query controller data is by getting the buttons() function.
-    // See how the different "dump*" functions dump the Controller info.
     // dumpGamepad(ctl);
+    digitalWrite(LED, HIGH); // Indicate Bluetooth connected - Blue light on ESP32
     sendSerial(ctl);
-}
-
-void processMouse(ControllerPtr ctl) {
-    // This is just an example.
-    if (ctl->scrollWheel() > 0) {
-        // Do Something
-    } else if (ctl->scrollWheel() < 0) {
-        // Do something else
-    }
-
-    // See "dumpMouse" for possible things to query.
-    dumpMouse(ctl);
-}
-
-void processKeyboard(ControllerPtr ctl) {
-    // This is just an example.
-    if (ctl->isKeyPressed(Keyboard_A)) {
-        // Do Something
-        Serial.println("Key 'A' pressed");
-    }
-
-    // Don't do "else" here.
-    // Multiple keys can be pressed at the same time.
-    if (ctl->isKeyPressed(Keyboard_LeftShift)) {
-        // Do something else
-        Serial.println("Key 'LEFT SHIFT' pressed");
-    }
-
-    // Don't do "else" here.
-    // Multiple keys can be pressed at the same time.
-    if (ctl->isKeyPressed(Keyboard_LeftArrow)) {
-        // Do something else
-        Serial.println("Key 'Left Arrow' pressed");
-    }
-
-    // See "dumpKeyboard" for possible things to query.
-    dumpKeyboard(ctl);
-}
-
-void processBalanceBoard(ControllerPtr ctl) {
-    // This is just an example.
-    if (ctl->topLeft() > 10000) {
-        // Do Something
-    }
-
-    // See "dumpBalanceBoard" for possible things to query.
-    dumpBalanceBoard(ctl);
 }
 
 void processControllers() {
@@ -211,12 +94,6 @@ void processControllers() {
         if (myController && myController->isConnected() && myController->hasData()) {
             if (myController->isGamepad()) {
                 processGamepad(myController);
-            } else if (myController->isMouse()) {
-                processMouse(myController);
-            } else if (myController->isKeyboard()) {
-                processKeyboard(myController);
-            } else if (myController->isBalanceBoard()) {
-                processBalanceBoard(myController);
             } else {
                 Serial.println("Unsupported controller");
             }
@@ -259,24 +136,13 @@ void loop() {
     // Call this function in your main loop.
     bool dataUpdated = BP32.update();
     if (dataUpdated)
-        processControllers();
+        processControllers(); // In here, Serial2 packet sent
 
-    // uint16_t leftYAxis = myControllers[0]->axisY() + 511;
-    // uint16_t rightYAxis = myControllers[0]->axisRY() + 511;  
-    uint16_t leftYAxis = 512 + 511;
-    uint16_t rightYAxis = 512 + 511;
-    uint32_t dataPacket = (leftYAxis << 16) | (rightYAxis);
-    // Serial.printf("%4d", dataPacket);
-    // Serial2.write(dataPacket);
-
-    // uint32_t test = 0x33;
-    // Serial2.write(0x0033);
     // The main loop must have some kind of "yield to lower priority task" event.
     // Otherwise, the watchdog will get triggered.
     // If your main loop doesn't have one, just add a simple `vTaskDelay(1)`.
     // Detailed info here:
     // https://stackoverflow.com/questions/66278271/task-watchdog-got-triggered-the-tasks-did-not-reset-the-watchdog-in-time
-
     vTaskDelay(1);
     // delay(150);
 }

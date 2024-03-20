@@ -167,40 +167,18 @@ void initUART2(uint32_t baud_rate) {
     UART2->C2 |= ((UART_C2_TE_MASK) | (UART_C2_RE_MASK)); //Enable TX and RX
 }
 
-/* UART2 Transmit Poll */
-void UART2_Transmit_Poll(uint8_t data) {
-    while(!(UART2->S1 & UART_S1_TDRE_MASK)); // wait until transmit data register is empty
-    UART2->D = data; // put into D register
-    // in transmit mode , waiting for data to be set
-}
+// /* UART2 Transmit Poll */
+// void UART2_Transmit_Poll(uint8_t data) {
+//     while(!(UART2->S1 & UART_S1_TDRE_MASK)); // wait until transmit data register is empty
+//     UART2->D = data; // put into D register
+//     // in transmit mode , waiting for data to be set
+// }
 
-/* UART2 Receive Poll */
-uint8_t UART2_Receive_Poll(void) {
-    while(!(UART2->S1 & UART_S1_RDRF_MASK)); // wait until receive data register is full
-    return (UART2->D);
-}
-
-void ledControl(int colour, led_status_t led_status) {
-	if (colour == RED_LED ) {
-		if (led_status == led_on) {
-			PTB->PCOR = MASK(RED_LED);
-		} else {
-			PTB->PSOR = MASK(RED_LED);
-		}
-	} else if (colour == GREEN_LED) {
-		if (led_status == led_on) {
-			PTB->PCOR = MASK(GREEN_LED);
-		} else {
-			PTB->PSOR = MASK(GREEN_LED);
-		}
-	} else if (colour == BLUE_LED) {
-		if (led_status == led_on) {
-			PTD->PCOR = MASK(BLUE_LED);
-		} else {
-			PTD->PSOR = MASK(BLUE_LED);
-		}
-	} 
-}
+// /* UART2 Receive Poll */
+// uint8_t UART2_Receive_Poll(void) {
+//     while(!(UART2->S1 & UART_S1_RDRF_MASK)); // wait until receive data register is full
+//     return (UART2->D);
+// }
 
 int main(void) {
 	// uint8_t rx_data = 0x01; // Polling feature - placeholder value
@@ -210,45 +188,21 @@ int main(void) {
 	offAllLed();
 
 	while (1) {
-		offAllLed(); // With this here it will just blink for 0x80000 
-		// LEFT is MS 16 bits, RIGHT is LS 16 bits, range of (-511 to 512) + 512, 
-		// therefore left == 512 -> actual stick is at 0
-		// left == 1024 -> stick is all the way down
-		// left == 0 -> stick is all the way up
+		offAllLed(); 
+		// left and right are both 4 bit numbers from 0 (UP) to 15 (DOWN)
+		// 7-8 is the idle position
 		uint8_t left = (rx_IRQ_data >> 4);
 		uint8_t right = rx_IRQ_data & 0x0F;
 
 		//IRQ Mode
 		if (rx_IRQ_data == 0x31) { // ON Red LED
 			PTB->PCOR = MASK(RED_LED); // TEST
-		} else if(right > 4) { // Left Forward
+		} else if(left > 8) { // LEFT DOWN
 			PTB->PCOR = MASK(GREEN_LED); // JUST TO TEST
-		} else if (left <= 3) { // Left not moving
+		} else if (right < 7) { // RIGHT UP
 			PTD->PCOR = MASK(BLUE_LED); // JUST TO TEST
 		} else { 
 			offAllLed();
 		}
-
-		// if(right > 512) { // Right Forward
-		// } else if (right == 511) { // Right not moving
-		// } else { // Right Backwards
-		// }
-
-		// if (rx_IRQ_data == 0x30) { // OFF Red LED
-		// 	PTB->PSOR = MASK(RED_LED);
-		// 	delay(0x80000);
-		// } else if (rx_IRQ_data == 0x31) { // ON Red LED
-		// 	PTB->PCOR = MASK(RED_LED);
-		// 	delay(0x80000);
-		// } else if (rx_IRQ_data == 0x32) { // OFF Green LED
-		// 	PTB->PSOR = MASK(GREEN_LED);
-		// 	delay(0x80000);
-		// } else if (rx_IRQ_data == 0x33) { // ON Green LED
-		// 	PTB->PCOR = MASK(GREEN_LED);
-		// 	delay(0x80000);
-		// } else {
-		// 	PTD->PCOR = MASK(BLUE_LED);
-		// 	delay(0x80000);
-		// }
 	}
 }
