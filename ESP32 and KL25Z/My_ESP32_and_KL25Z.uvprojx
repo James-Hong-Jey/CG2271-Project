@@ -383,9 +383,9 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>my_ESP32_and_KL25Z.c</FileName>
+              <FileName>controller_ESP32_and_KL25Z.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\my_ESP32_and_KL25Z.c</FilePath>
+              <FilePath>.\controller_ESP32_and_KL25Z.c</FilePath>
             </File>
           </Files>
         </Group>
