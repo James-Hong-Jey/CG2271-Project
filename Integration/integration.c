@@ -1,14 +1,12 @@
 /*----------------------------------------------------------------------------
  * CMSIS-RTOS 'main' function template
  *---------------------------------------------------------------------------*/
- 
+#include "MKL25Z4.h" 
 #include "RTE_Components.h"
 #include  CMSIS_device_header
-#include "cmsis_os2.h"
+#include "cmsis_os2.h" 
  
- 
- 
- 
+
  
  
  
@@ -430,7 +428,7 @@ void initAudioPWM(void) {
 	
 
 	
-	//Enables the clock gate for TPM1 module, datasheet page 208
+	//Enables the clock gate for TPM0 module, datasheet page 208
 	SIM->SCGC6 |= SIM_SCGC6_TPM0_MASK; 
 	
 	
@@ -658,7 +656,8 @@ void play_once_upon_a_time_one_octave_up()
 		TPM0->MOD = period;
 		TPM0_C3V = period / 6; 
 		
-		delay_ms(curr_note_duration);
+		osDelay(curr_note_duration);
+		//delay_ms(curr_note_duration);
 
 	}
 };
@@ -686,7 +685,8 @@ void play_river_flows_in_you()
 		TPM0->MOD = period;
 		TPM0_C3V = period / 6; 
 		
-		delay_ms(curr_note_duration);
+		osDelay(curr_note_duration);
+		//delay_ms(curr_note_duration);
 
 	}
 };
@@ -773,14 +773,16 @@ void InitLEDGPIO(void) {
 
 
 void led_toggler(int colour_current) { //, int colour_previou
-  PTE->PCOR = (MASK(2)|MASK(3)|MASK(4)|MASK(5)|MASK(20)|MASK(21)|MASK(22)|MASK(23)|MASK(29)|MASK(30));
+  PTC->PCOR = (MASK(GREEN_LED_1)|MASK(GREEN_LED_2)|MASK(GREEN_LED_3)|MASK(GREEN_LED_4)|MASK(GREEN_LED_5)|MASK(GREEN_LED_6)|MASK(GREEN_LED_7)|MASK(GREEN_LED_8)|MASK(GREEN_LED_9)|MASK(GREEN_LED_10));
   //PTE->PCOR = MASK(colour_previous);
-  PTE->PSOR = MASK(colour_current);
+  PTC->PSOR |= MASK(colour_current);
   //delay(0xf0f0); // POTENTIAL BUG -> could cause a lot of lag time and stall processer
 	osDelay(61680); // TODO: Fine-Tune this. I converted 0xf0f0 directly to decimal
 }
 void green_led_left_to_right(){
-  while (1){
+  
+	/*
+	while (1){ // TODO: The code can get struck here.
 		led_toggler(GREEN_LED_1);
 		led_toggler(GREEN_LED_2);
 		led_toggler(GREEN_LED_3);
@@ -802,17 +804,61 @@ void green_led_left_to_right(){
 		led_toggler(GREEN_LED_2);
 		led_toggler(GREEN_LED_1);
 	}
+	*/
+	
+	led_toggler(GREEN_LED_1);
+	led_toggler(GREEN_LED_2);
+	led_toggler(GREEN_LED_3);
+	led_toggler(GREEN_LED_4);
+	led_toggler(GREEN_LED_5);
+	led_toggler(GREEN_LED_6);
+	led_toggler(GREEN_LED_7);
+	led_toggler(GREEN_LED_8);
+	led_toggler(GREEN_LED_9);
+	led_toggler(GREEN_LED_10); // final state
+	led_toggler(GREEN_LED_10);
+	led_toggler(GREEN_LED_9);
+	led_toggler(GREEN_LED_8);
+	led_toggler(GREEN_LED_7);
+	led_toggler(GREEN_LED_6);
+	led_toggler(GREEN_LED_5);
+	led_toggler(GREEN_LED_4);
+	led_toggler(GREEN_LED_3);
+	led_toggler(GREEN_LED_2);
+	led_toggler(GREEN_LED_1);
+	
+	
+	
 }
 
 
 
 void green_led_remain() { //, int colour_previou
-  PTE->PSOR = (MASK(2)|MASK(3)|MASK(4)|MASK(5)|MASK(20)|MASK(21)|MASK(22)|MASK(23)|MASK(29)|MASK(30));
+  PTC->PSOR = (MASK(GREEN_LED_1)|MASK(GREEN_LED_2)|MASK(GREEN_LED_3)|MASK(GREEN_LED_4)|MASK(GREEN_LED_5)|MASK(GREEN_LED_6)|MASK(GREEN_LED_7)|MASK(GREEN_LED_8)|MASK(GREEN_LED_9)|MASK(GREEN_LED_10));
   //delay();
 }
 
 
 
+void toggleRedLED500ms (){    // Red LEDs go on for 500ms and off for 500ms
+    
+    PTB->PCOR |= MASK(RED_LED_1);
+    osDelay(500);
+    PTB->PSOR |= MASK(RED_LED_1);
+    osDelay(500);
+    
+}
+	
+void toggleREDLED250ms (){    // Red LEDs go on for 250ms and off for 250ms
+    
+    PTB->PCOR |= MASK(RED_LED_1);
+		osDelay(100); // TODO: CHANGE BACK
+    PTB->PSOR |= MASK(RED_LED_1);
+    osDelay(100);
+    
+}
+
+/*
 void toggleRedLED500ms (){    // Red LEDs go on for 500ms and off for 500ms
     while(1){
     PTB->PCOR |= MASK(RED_LED_1);
@@ -830,8 +876,7 @@ void toggleREDLED250ms (){    // Red LEDs go on for 250ms and off for 250ms
     osDelay(250);
     }
 }
- 
-
+*/
 
 
 
@@ -844,7 +889,6 @@ void toggleREDLED250ms (){    // Red LEDs go on for 250ms and off for 250ms
 
 void UART2_IRQHandler(void) {
   NVIC_ClearPendingIRQ(UART2_IRQn);
-
   // Transmitter ready
   if(UART2->S1 & UART_S1_TDRE_MASK) {
     if(Q_Empty(&tx_q)) {
@@ -988,7 +1032,7 @@ void led_stationary_thread(void *argument)
 		// Function for Rear 8-10 Red LED to be Flashing at 250 ms ON ,250 ms OFF
 		toggleREDLED250ms(); // delay is already built in
 		
-		osSemaphoreRelease(ledStationarySem);
+		
 	}
 };
 
@@ -1003,12 +1047,42 @@ void led_moving_thread(void *argument)
 		
 		// Function for Rear 8-10 Red LED to be Flashing at 500 ms ON ,500 ms OFF
 		toggleRedLED500ms(); // delay is already built in
-		;
-		osSemaphoreRelease(ledMovingSem);
+		
+
 	}
 	
 	
 }
+
+
+/*
+void led_thread(void *argument) 
+{
+	for(;;)
+	{
+		
+		if (rx_IRQ_data == 0x01 || rx_IRQ_data == 0x02 || rx_IRQ_data == 0x03 ||
+				rx_IRQ_data == 0x04 || rx_IRQ_data == 0x05 || rx_IRQ_data == 0x06) {
+			green_led_left_to_right();
+		
+			// Function for Rear 8-10 Red LED to be Flashing at 500 ms ON ,500 ms OFF
+			toggleRedLED500ms(); // delay is already built in
+
+					
+			
+		} else
+		{
+			// Function for Front 8-10 Green LED to be in ALL LIGHTED UP
+			green_led_remain();
+			
+			// Function for Rear 8-10 Red LED to be Flashing at 250 ms ON ,250 ms OFF
+			toggleREDLED250ms(); // delay is already built in
+		}	
+	}
+};
+
+*/
+
 
 
 // ######################## END OF THREADS  ################################
@@ -1025,7 +1099,7 @@ void app_main (void *argument) {
  
   // ...
   for (;;) {
-		
+		;
 	
 	
 	}
@@ -1040,8 +1114,7 @@ int main (void) {
 	
 	// AUDIO 
 	initAudioPWM();
-	audioRaceOngoingSem = osSemaphoreNew(1,0,NULL);
-	audioRaceFinishedSem = osSemaphoreNew(1,0,NULL);
+	
 	
   
 	// MOTOR 
@@ -1053,27 +1126,29 @@ int main (void) {
 	
 	// LED
 	InitLEDGPIO();
-	ledStationarySem = osSemaphoreNew(1,0,NULL);
-	ledMovingSem = osSemaphoreNew(1,0,NULL);
+	
 	
 
 	
 	
  
   osKernelInitialize();                 // Initialize CMSIS-RTOS
-	
+	audioRaceOngoingSem = osSemaphoreNew(1,0,NULL);
+	audioRaceFinishedSem = osSemaphoreNew(1,0,NULL);
+	ledStationarySem = osSemaphoreNew(1,0,NULL);
+	ledMovingSem = osSemaphoreNew(1,0,NULL);
 	
 	osThreadNew(motor_thread, NULL, NULL);
 	osThreadNew(led_moving_thread, NULL,NULL);
 	osThreadNew(led_stationary_thread, NULL, NULL);
-	osThreadNew(audio_race_ongoing_thread, NULL, NULL);
-	osThreadNew(audio_race_finished_thread, NULL, NULL);
+	//osThreadNew(audio_race_ongoing_thread, NULL, NULL);
+	//osThreadNew(audio_race_finished_thread, NULL, NULL);
+	
+	//osThreadNew(led_thread, NULL, NULL);
 	
 	
 	
-	
-	
-  osThreadNew(app_main, NULL, NULL);    // Create application main thread
+  //osThreadNew(app_main, NULL, NULL);    // Create application main thread
 	
 	
 	
