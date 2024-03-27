@@ -702,7 +702,7 @@ void play_river_flows_in_you()
 // ####################### START OF LED TASK ###########################
 
 // The numbering here looks weird but follows a line on the left-side of the board
-
+#define RED_LED_1 8 		// 	PortB Pin 8 
 #define GREEN_LED_1 7 //	PortC Pin 7
 #define GREEN_LED_2 0 //	PortC Pin 0
 #define GREEN_LED_3 3 //	PortC Pin 3
@@ -717,6 +717,8 @@ void play_river_flows_in_you()
 
 
 void InitLEDGPIO(void) {
+	
+	// Green LED
   //Enable CLock to PORTC
   SIM->SCGC5 |= (SIM_SCGC5_PORTC_MASK); 
   
@@ -754,6 +756,17 @@ void InitLEDGPIO(void) {
   //Set Data Direction Registers for PortB and PortD
   PTC->PDDR |= (MASK(GREEN_LED_1) | MASK(GREEN_LED_2) | MASK(GREEN_LED_3) | MASK(GREEN_LED_4) | MASK(GREEN_LED_5) | 
                 MASK(GREEN_LED_6) | MASK(GREEN_LED_7) | MASK(GREEN_LED_8) | MASK(GREEN_LED_9) | MASK(GREEN_LED_10));
+								
+								
+								
+								
+	// RED LED 
+	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
+    
+	PORTB->PCR[RED_LED_1] &= ~PORT_PCR_MUX_MASK;
+	PORTB->PCR[RED_LED_1] |= PORT_PCR_MUX(1);
+	
+	PTB->PDDR |= MASK(RED_LED_1);
 };
 
 
@@ -763,9 +776,10 @@ void led_toggler(int colour_current) { //, int colour_previou
   PTE->PCOR = (MASK(2)|MASK(3)|MASK(4)|MASK(5)|MASK(20)|MASK(21)|MASK(22)|MASK(23)|MASK(29)|MASK(30));
   //PTE->PCOR = MASK(colour_previous);
   PTE->PSOR = MASK(colour_current);
-  delay(0xf0f0); // POTENTIAL BUG -> could cause a lot of lag time and stall processer
+  //delay(0xf0f0); // POTENTIAL BUG -> could cause a lot of lag time and stall processer
+	osDelay(61680); // TODO: Fine-Tune this. I converted 0xf0f0 directly to decimal
 }
-void leftOrRight(){
+void green_led_left_to_right(){
   while (1){
 		led_toggler(GREEN_LED_1);
 		led_toggler(GREEN_LED_2);
@@ -792,14 +806,31 @@ void leftOrRight(){
 
 
 
-void led_remain() { //, int colour_previou
+void green_led_remain() { //, int colour_previou
   PTE->PSOR = (MASK(2)|MASK(3)|MASK(4)|MASK(5)|MASK(20)|MASK(21)|MASK(22)|MASK(23)|MASK(29)|MASK(30));
   //delay();
 }
 
 
 
-
+void toggleRedLED500ms (){    // Red LEDs go on for 500ms and off for 500ms
+    while(1){
+    PTB->PCOR |= MASK(RED_LED_1);
+    osDelay(500);
+    PTB->PSOR |= MASK(RED_LED_1);
+    osDelay(500);
+    }
+}
+	
+void toggleREDLED250ms (){    // Red LEDs go on for 250ms and off for 250ms
+    while(1){
+    PTB->PCOR |= MASK(RED_LED_1);
+    osDelay(250);
+    PTB->PSOR |= MASK(RED_LED_1);
+    osDelay(250);
+    }
+}
+ 
 
 
 
@@ -850,7 +881,7 @@ void UART2_IRQHandler(void) {
 
 void motor_thread(void *argument) {
 	for(;;) {
-		offAllLed();
+		//offAllLed();
     //stopMotor();
     // left and right are both 4 bit numbers from 0 (UP) to 15 (DOWN)
     // 7-8 is the idle position
@@ -952,11 +983,11 @@ void led_stationary_thread(void *argument)
 	{
 		osSemaphoreAcquire(ledStationarySem, osWaitForever);
 		// Function for Front 8-10 Green LED to be in ALL LIGHTED UP
-		;
+		green_led_remain();
 		
 		// Function for Rear 8-10 Red LED to be Flashing at 250 ms ON ,250 ms OFF
-	
-		;
+		toggleREDLED250ms(); // delay is already built in
+		
 		osSemaphoreRelease(ledStationarySem);
 	}
 };
@@ -968,10 +999,10 @@ void led_moving_thread(void *argument)
 	{
 		osSemaphoreAcquire(ledMovingSem, osWaitForever);
 		// Function for Front 8-10 Green LED to be in RUNNING MODE
-		;
+		green_led_left_to_right();
 		
 		// Function for Rear 8-10 Red LED to be Flashing at 500 ms ON ,500 ms OFF
-		
+		toggleRedLED500ms(); // delay is already built in
 		;
 		osSemaphoreRelease(ledMovingSem);
 	}
@@ -1030,7 +1061,22 @@ int main (void) {
 	
  
   osKernelInitialize();                 // Initialize CMSIS-RTOS
+	
+	
+	osThreadNew(motor_thread, NULL, NULL);
+	osThreadNew(led_moving_thread, NULL,NULL);
+	osThreadNew(led_stationary_thread, NULL, NULL);
+	osThreadNew(audio_race_ongoing_thread, NULL, NULL);
+	osThreadNew(audio_race_finished_thread, NULL, NULL);
+	
+	
+	
+	
+	
   osThreadNew(app_main, NULL, NULL);    // Create application main thread
+	
+	
+	
   osKernelStart();                      // Start thread execution
   for (;;) {}
 }
