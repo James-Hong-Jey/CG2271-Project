@@ -1,28 +1,7 @@
-/*----------------------------------------------------------------------------
- * CMSIS-RTOS 'main' function template
- *---------------------------------------------------------------------------*/
- 
+#include "MKL25Z4.h" 
 #include "RTE_Components.h"
 #include  CMSIS_device_header
-#include "cmsis_os2.h"
- 
- 
- 
- 
- 
- 
- 
- 
- 
-// ###################### START OF MOTOR AND URAT #########################
-
-
-// has to be declared early here as motor uses it
-osSemaphoreId_t ledStationarySem;
-osSemaphoreId_t ledMovingSem; 
-osSemaphoreId_t audioRaceOngoingSem;
-osSemaphoreId_t audioRaceFinishedSem;
-
+#include "cmsis_os2.h" 
 #define RED_LED 18 //PortB Pin 18
 #define GREEN_LED 19 //PortB Pin 19
 #define BLUE_LED 1 //PortD Pin 1
@@ -46,6 +25,20 @@ osSemaphoreId_t audioRaceFinishedSem;
 #define RIGHT_BACK 3 //PTB3 TPM2_CH1 (M2 & M4)
 #define DUTY_CYCLE 0x1D4C // 7500 (50hz)
  
+#define R2 0x01
+#define L2 0x02
+#define SQUARE 0x03
+#define TRIANGLE 0x04
+#define CROSS 0x05
+#define CIRCLE 0x06
+#define RJOYSTICK_RIGHT 0x07
+#define RJOYSTICK_LEFT 0x08
+#define LJOYSTICK_UP 0x10
+#define LJOYSTICK_DOWN 0x09
+
+
+ 
+ 
 
  typedef enum {
   led_on,
@@ -62,7 +55,7 @@ typedef struct {
 
 Q_T tx_q, rx_q;
 volatile uint8_t rx_IRQ_data = 0x00;
-// volatile uint32_t rx_IRQ_data = 0;
+
 
 void Q_Init(Q_T *q) {
   unsigned int i;
@@ -162,18 +155,6 @@ void initUART2(uint32_t baud_rate) {
     UART2->C2 |= ((UART_C2_TE_MASK) | (UART_C2_RE_MASK)); //Enable TX and RX
 }
 
-// /* UART2 Transmit Poll */
-// void UART2_Transmit_Poll(uint8_t data) {
-//     while(!(UART2->S1 & UART_S1_TDRE_MASK)); // wait until transmit data register is empty
-//     UART2->D = data; // put into D register
-//     // in transmit mode , waiting for data to be set
-// }
-
-// /* UART2 Receive Poll */
-// uint8_t UART2_Receive_Poll(void) {
-//     while(!(UART2->S1 & UART_S1_RDRF_MASK)); // wait until receive data register is full
-//     return (UART2->D);
-// }
 
 void initMotorPWM(void) {
     // enable clock gating for PORTB
@@ -244,25 +225,25 @@ void stopMotor() {
     TPM2_C1V = 0; // Stop Right motors back
 }
 
-void rotateRight() {
+void forwardMotor() { // FORWARD
     TPM1->MOD = 7500;
-    TPM1_C0V = 3750; // Left motors forward
+    TPM1_C0V = DUTY_CYCLE; // Left motors forward
 
     TPM2->MOD = 7500;
-    TPM2_C0V = 3750; // Right motors forward
+    TPM2_C0V = DUTY_CYCLE; // Right motors forward
 }
 
-void rotateLeft() {
+void reverseMotor() {
     TPM1->MOD = 7500;
-    TPM1_C1V = 3750; // Left motors reverse
+    TPM1_C1V = DUTY_CYCLE; // Left motors reverse
 
     TPM2->MOD = 7500;
-    TPM2_C1V = 3750; // Right motors reverse
+    TPM2_C1V = DUTY_CYCLE; // Right motors reverse
 }
 
 void leftTurn() {
     TPM1->MOD = 7500;
-    TPM1_C0V = 0x1964; // Left motors slower
+    TPM1_C0V = 1000; // Left motors slower
 
     TPM2->MOD = 7500;
     TPM2_C0V = DUTY_CYCLE; // Right motors faster
@@ -276,20 +257,20 @@ void rightTurn() {
     TPM2_C0V = 1000; // Right motors slower
 }
 
-void forwardMotor() {
+void rotateRight(int speed) { //RIGHT
     TPM1->MOD = 7500;
-    TPM1_C1V = DUTY_CYCLE; // Left motors reverse
+    TPM1_C1V = speed; // Left motors forward
 
     TPM2->MOD = 7500;
-    TPM2_C0V = DUTY_CYCLE; // Right motors forward
+    TPM2_C0V = speed; // Right motors reverse
 }
 
-void reverseMotor() {
+void rotateLeft(int speed) { // LEFT
     TPM1->MOD = 7500;
-    TPM1_C0V = DUTY_CYCLE; // Left motors forward
+    TPM1_C0V = speed; // Left motors reverse
 
     TPM2->MOD = 7500;
-    TPM2_C1V = DUTY_CYCLE; // Right motors reverse
+    TPM2_C1V = speed; // Right motors forward
 }
 
 
@@ -300,11 +281,259 @@ static void delay(volatile uint32_t nof) {
     }
 }
 
- // ###################### END OF MOTOR AND URAT  ########################
- 
- 
+void UART2_IRQHandler(void) {
+  NVIC_ClearPendingIRQ(UART2_IRQn);
+  // Transmitter ready
+  if(UART2->S1 & UART_S1_TDRE_MASK) {
+    if(Q_Empty(&tx_q)) {
+            // Queue Empty so disable interrupts
+            UART2->C2 &= ~UART_C2_TIE_MASK; 
+        } else {
+            UART2->D = Q_Dequeue(&tx_q);
+        }
+  }
 
-// ####################### START OF AUDIO TASK ###########################
+  // If receiver is full
+  if(UART2->S1 & UART_S1_RDRF_MASK) {
+        if(Q_Full(&rx_q)) {
+            while(1); // TODO: Handle error
+        } else {
+            rx_IRQ_data = UART2->D;
+        }
+  }
+
+  // Error checking
+  if(UART2->S1 & (UART_S1_OR_MASK | 
+                    UART_S1_NF_MASK | 
+                    UART_S1_FE_MASK | 
+                    UART_S1_PF_MASK)) {
+    // TODO: Handle error
+    // TODO: Clear Flag
+    return;
+  }
+}
+
+volatile _Bool is_led_running = 0;
+
+void motor_thread(void *argument) {
+	for(;;) {
+		//offAllLed();
+    //stopMotor();
+    // left and right are both 4 bit numbers from 0 (UP) to 15 (DOWN)
+    // 7-8 is the idle position
+    uint8_t leftStick = (rx_IRQ_data >> 4);
+    uint8_t rightStick = rx_IRQ_data & 0x0F;
+
+    
+
+		
+		
+		if (rx_IRQ_data == R2) { // 0x01
+        rightTurn();
+    } else if (rx_IRQ_data == L2) { // 0x02
+        leftTurn();
+    } else if (rx_IRQ_data == RJOYSTICK_RIGHT) { // 0x06
+        rotateRight(4000);
+    } else if (rx_IRQ_data == RJOYSTICK_LEFT) {
+        rotateLeft(4000);
+    } else if (rx_IRQ_data == LJOYSTICK_UP) { // 0x04
+        forwardMotor(); //forward
+    } else if (rx_IRQ_data == LJOYSTICK_DOWN) {
+        reverseMotor(); //REVERSE
+    } else {
+        stopMotor();
+    }
+		
+				
+	}
+	
+}
+
+
+
+// ####################### START OF LED TASK ###########################
+
+// The numbering here looks weird but follows a line on the left-side of the board
+#define RED_LED_1 8 		// 	PortB Pin 8 
+#define GREEN_LED_1 7 //	PortC Pin 7
+#define GREEN_LED_2 0 //	PortC Pin 0
+#define GREEN_LED_3 3 //	PortC Pin 3
+#define GREEN_LED_4 4 //	PortC Pin 4
+#define GREEN_LED_5 5 //	PortC Pin 5
+#define GREEN_LED_6 6 //	PortC Pin 6
+#define GREEN_LED_7 10 //	PortC Pin 10
+#define GREEN_LED_8 11 //	PortC Pin 11
+#define GREEN_LED_9 12 //	PortC Pin 12
+#define GREEN_LED_10 13//	PortC Pin 13
+#define MASK(x) (1 << (x))
+
+
+void InitLEDGPIO(void) {
+	
+	// Green LED
+  //Enable CLock to PORTC
+  SIM->SCGC5 |= (SIM_SCGC5_PORTC_MASK); 
+  
+  //Configure MUX settings 
+  PORTC->PCR[GREEN_LED_1] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_1] |= PORT_PCR_MUX(1); //Assign output
+  
+  PORTC->PCR[GREEN_LED_2] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_2] |= PORT_PCR_MUX(1); //Assign output 
+  
+  PORTC->PCR[GREEN_LED_3] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_3] |= PORT_PCR_MUX(1); //Assign output 
+   
+  PORTC->PCR[GREEN_LED_4] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_4] |= PORT_PCR_MUX(1); //Assign output 
+   
+  PORTC->PCR[GREEN_LED_5] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_5] |= PORT_PCR_MUX(1); //Assign output 
+   
+  PORTC->PCR[GREEN_LED_6] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_6] |= PORT_PCR_MUX(1); //Assign output 
+   
+  PORTC->PCR[GREEN_LED_7] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_7] |= PORT_PCR_MUX(1); //Assign output 
+   
+  PORTC->PCR[GREEN_LED_8] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_8] |= PORT_PCR_MUX(1); //Assign output 
+  
+  PORTC->PCR[GREEN_LED_9] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_9] |= PORT_PCR_MUX(1); //Assign output 
+   
+  PORTC->PCR[GREEN_LED_10] &= ~PORT_PCR_MUX_MASK; //clear 
+  PORTC->PCR[GREEN_LED_10] |= PORT_PCR_MUX(1); //Assign output 
+  
+  //Set Data Direction Registers for PortB and PortD
+  PTC->PDDR |= (MASK(GREEN_LED_1) | MASK(GREEN_LED_2) | MASK(GREEN_LED_3) | MASK(GREEN_LED_4) | MASK(GREEN_LED_5) | 
+                MASK(GREEN_LED_6) | MASK(GREEN_LED_7) | MASK(GREEN_LED_8) | MASK(GREEN_LED_9) | MASK(GREEN_LED_10));
+								
+								
+								
+								
+	// RED LED 
+	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
+    
+	PORTB->PCR[RED_LED_1] &= ~PORT_PCR_MUX_MASK;
+	PORTB->PCR[RED_LED_1] |= PORT_PCR_MUX(1);
+	
+	PTB->PDDR |= MASK(RED_LED_1);
+};
+
+
+
+
+void led_toggler(int colour_current) { //, int colour_previou
+  PTC->PCOR = (MASK(GREEN_LED_1)|MASK(GREEN_LED_2)|MASK(GREEN_LED_3)|MASK(GREEN_LED_4)|MASK(GREEN_LED_5)|MASK(GREEN_LED_6)|MASK(GREEN_LED_7)|MASK(GREEN_LED_8)|MASK(GREEN_LED_9)|MASK(GREEN_LED_10));
+
+  PTC->PSOR = MASK(colour_current);
+	osDelay(40); // TODO: Fine-Tune this. I converted 0xf0f0 directly to decimal
+}
+
+
+int greenPins[] = {GREEN_LED_1, GREEN_LED_2, GREEN_LED_3, GREEN_LED_4, GREEN_LED_5, GREEN_LED_6, GREEN_LED_7,GREEN_LED_8,GREEN_LED_9,GREEN_LED_10};
+
+void green_led_left_to_right(){
+
+    for (int i = 0; i < 10; i++){
+      led_toggler(greenPins[i]);
+//Can add delay here as required
+    }
+  
+}
+
+
+
+void green_led_remain() { //, int colour_previou
+  PTC->PSOR = (MASK(GREEN_LED_1)|MASK(GREEN_LED_2)|MASK(GREEN_LED_3)|MASK(GREEN_LED_4)|MASK(GREEN_LED_5)|MASK(GREEN_LED_6)|MASK(GREEN_LED_7)|MASK(GREEN_LED_8)|MASK(GREEN_LED_9)|MASK(GREEN_LED_10));
+  //delay();
+}
+
+
+
+void toggleRedLED500ms (){    // Red LEDs go on for 500ms and off for 500ms
+    
+    PTB->PCOR |= MASK(RED_LED_1);
+    osDelay(500);
+    PTB->PSOR |= MASK(RED_LED_1);
+    osDelay(500);
+    
+}
+	
+void toggleREDLED250ms (){    // Red LEDs go on for 250ms and off for 250ms
+    
+    PTB->PCOR |= MASK(RED_LED_1);
+    osDelay(250);
+    PTB->PSOR |= MASK(RED_LED_1);
+    osDelay(250);
+    
+}
+
+
+
+
+
+
+// ####################### END OF LED TASK ###############################
+
+
+
+void led_green_thread(void *argument)
+{
+	//uint8_t command = NODATA;
+	uint8_t command = rx_IRQ_data; // this is horrible practice
+	
+	for(;;)
+	{
+		//osMessageQueueGet(tGreenMsg, &command, NULL, 0);
+		
+		if (rx_IRQ_data == R2 || rx_IRQ_data == L2 || rx_IRQ_data == RJOYSTICK_RIGHT || rx_IRQ_data == RJOYSTICK_LEFT || rx_IRQ_data == LJOYSTICK_UP || rx_IRQ_data == LJOYSTICK_DOWN) 
+		{
+			green_led_left_to_right();
+		}
+		else { // every other command
+			green_led_remain();
+		}
+	}
+	
+}
+
+void led_red_thread(void *argument)
+{
+	
+	//uint8_t command = NODATA;
+	
+	uint8_t command = rx_IRQ_data; // this is horrible practice
+	 
+	for(;;)
+	{
+		//osMessageQueueGet(tRedMsg, &command, NULL, 0);
+		
+		if (rx_IRQ_data == R2 || rx_IRQ_data == L2 || rx_IRQ_data == RJOYSTICK_RIGHT || rx_IRQ_data == RJOYSTICK_LEFT || rx_IRQ_data == LJOYSTICK_UP || rx_IRQ_data == LJOYSTICK_DOWN) 
+		{
+			toggleRedLED500ms(); // TODO: CHECK IF THIS IS CORRECT 250MS
+		}
+		else { // every other command --> stationary
+			toggleREDLED250ms();
+		}
+	}
+}
+
+
+
+#define R2 0x01
+#define L2 0x02
+#define SQUARE 0x03
+#define TRIANGLE 0x04
+#define CROSS 0x05
+#define CIRCLE 0x06
+#define RJOYSTICK_RIGHT 0x07
+#define RJOYSTICK_LEFT 0x08
+#define LJOYSTICK_UP 0x10
+#define LJOYSTICK_DOWN 0x09
+
+
 
 #define NOTE_B0  31
 #define NOTE_C1  33
@@ -422,7 +651,7 @@ void delay_ms(uint32_t delay)
 void initAudioPWM(void) {
 	
 	//Enables the clock gate for Port E
-	SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
+	//SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
 	
 	
 	PORTE->PCR[PTE30_Pin] &= ~PORT_PCR_MUX_MASK; //Clear bit 10 to 8
@@ -430,7 +659,7 @@ void initAudioPWM(void) {
 	
 
 	
-	//Enables the clock gate for TPM1 module, datasheet page 208
+	//Enables the clock gate for TPM0 module, datasheet page 208
 	SIM->SCGC6 |= SIM_SCGC6_TPM0_MASK; 
 	
 	
@@ -561,29 +790,29 @@ int once_upon_a_time_notes_duration[] =
 int river_flows_in_you_notes[] = 
 {
 	// Bar 1
-	NOTE_A4,NOTE_E4,NOTE_E4,NOTE_FS4,NOTE_GS4,NOTE_A4,NOTE_E4,NOTE_E4,
+	NOTE_A5,NOTE_E5,NOTE_E5,NOTE_FS5,NOTE_GS5,NOTE_A5,NOTE_E5,NOTE_E5,
 
 	// Bar 2 
-	NOTE_A4,NOTE_E4,NOTE_E4,NOTE_FS4,NOTE_GS4,NOTE_A4,NOTE_E4,NOTE_E4,
+	NOTE_A5,NOTE_E5,NOTE_E5,NOTE_FS5,NOTE_GS5,NOTE_A5,NOTE_E5,NOTE_E5,
 	
 	// Bar 3
-	NOTE_B4,NOTE_FS4,NOTE_FS4,NOTE_GS4,NOTE_A4,NOTE_B4,NOTE_FS4,NOTE_E4,
+	NOTE_B5,NOTE_FS5,NOTE_FS5,NOTE_GS5,NOTE_A5,NOTE_B5,NOTE_FS5,NOTE_E5,
 	
 	
 	// Bar 4
-	NOTE_E4,NOTE_E4,NOTE_E4,NOTE_FS4,NOTE_GS4,NOTE_A4,NOTE_E4,NOTE_E4,
+	NOTE_E5,NOTE_E5,NOTE_E5,NOTE_FS5,NOTE_GS5,NOTE_A5,NOTE_E5,NOTE_E5,
 	
 	// Bar 5
-	NOTE_A4,NOTE_E4,NOTE_E4,NOTE_FS4,NOTE_GS4,NOTE_A4,NOTE_E4,NOTE_E4,
+	NOTE_A5,NOTE_E5,NOTE_E5,NOTE_FS5,NOTE_GS5,NOTE_A5,NOTE_E5,NOTE_E5,
 	
 	// Bar 6
-	NOTE_A4,NOTE_CS4,NOTE_B4,NOTE_A4,NOTE_GS4,NOTE_FS4,NOTE_GS4,NOTE_A4,
+	NOTE_A5,NOTE_CS5,NOTE_B5,NOTE_A5,NOTE_GS5,NOTE_FS5,NOTE_GS5,NOTE_A5,
 	
 	// Bar 7
-	NOTE_B4,NOTE_FS4,NOTE_E4,NOTE_FS4,NOTE_GS4,NOTE_A4,NOTE_E4,NOTE_E4,
+	NOTE_B5,NOTE_FS5,NOTE_E5,NOTE_FS5,NOTE_GS5,NOTE_A5,NOTE_E5,NOTE_E5,
 	
 	// Bar 8
-	NOTE_E4,NOTE_E4,NOTE_E4,NOTE_FS4,NOTE_GS4,NOTE_A4,NOTE_E4,NOTE_E4,
+	NOTE_E5,NOTE_E5,NOTE_E5,NOTE_FS5,NOTE_GS5,NOTE_A5,NOTE_E5,NOTE_E5,
 	
 	// Last
 	REST
@@ -651,19 +880,25 @@ void play_once_upon_a_time_one_octave_up()
 	for(int i = 0; i < notes_num; i++)
 	{
 		int curr_musical_note = once_upon_a_time_notes_one_octave_up[i];
-		float curr_note_duration = (1/once_upon_a_time_notes_duration[i]) * 4 * one_beat; // See reasoning above
-		
+		//float curr_note_duration = (1/once_upon_a_time_notes_duration[i]) * 4 * one_beat; // See reasoning above
+		float curr_note_duration = (1.0/once_upon_a_time_notes_duration[i]) * 4 * one_beat; // See reasoning above
 		int period = MOD(curr_musical_note);
 		
 		TPM0->MOD = period;
 		TPM0_C3V = period / 6; 
 		
-		delay_ms(curr_note_duration);
+		uint32_t delay_ticks = (uint32_t)(curr_note_duration + 0.5);
+		int multiplier = 1;
+	
+		osDelay(curr_note_duration*multiplier);
+		//delay_ms(curr_note_duration*multiplier);
+		
+		if (rx_IRQ_data == TRIANGLE) return;
 
 	}
 };
 
-#define MOD_river(x) (75000/x)
+#define MOD_river(x) (37500/x)
 void play_river_flows_in_you()
 {
 	int notes_num = sizeof(river_flows_in_you_notes)/ sizeof(river_flows_in_you_notes[0]);
@@ -679,373 +914,62 @@ void play_river_flows_in_you()
 	for(int i = 0; i < notes_num; i++)
 	{
 		int curr_musical_note = river_flows_in_you_notes[i];
-		float curr_note_duration = (1/river_flows_in_you_duration[i]) * 4 * one_beat; // See reasoning above
+		float curr_note_duration = (1.0/river_flows_in_you_duration[i]) * 4 * one_beat; // See reasoning above
 		
 		int period = MOD_river(curr_musical_note);
 		
 		TPM0->MOD = period;
 		TPM0_C3V = period / 6; 
 		
-		delay_ms(curr_note_duration);
+		osDelay(curr_note_duration);
+		//osDelay(1000);
+		//delay_ms(curr_note_duration);
+		
 
 	}
 };
 
+
+
+void audio_thread(void *argument) {
+	
+	
+	for(;;)
+	{
+		if (rx_IRQ_data == TRIANGLE) 
+		{
+			play_river_flows_in_you();
+			
+		}
+		else 
+		{		
+			play_once_upon_a_time_one_octave_up();
+		}
+		
+	}
+}
 
 
 // ####################### END OF AUDIO TASK ###############################
 
 
 
-
-
-// ####################### START OF LED TASK ###########################
-
-// The numbering here looks weird but follows a line on the left-side of the board
-#define RED_LED_1 8 		// 	PortB Pin 8 
-#define GREEN_LED_1 7 //	PortC Pin 7
-#define GREEN_LED_2 0 //	PortC Pin 0
-#define GREEN_LED_3 3 //	PortC Pin 3
-#define GREEN_LED_4 4 //	PortC Pin 4
-#define GREEN_LED_5 5 //	PortC Pin 5
-#define GREEN_LED_6 6 //	PortC Pin 6
-#define GREEN_LED_7 10 //	PortC Pin 10
-#define GREEN_LED_8 11 //	PortC Pin 11
-#define GREEN_LED_9 12 //	PortC Pin 12
-#define GREEN_LED_10 13//	PortC Pin 13
-#define MASK(x) (1 << (x))
-
-
-void InitLEDGPIO(void) {
-	
-	// Green LED
-  //Enable CLock to PORTC
-  SIM->SCGC5 |= (SIM_SCGC5_PORTC_MASK); 
-  
-  //Configure MUX settings 
-  PORTC->PCR[GREEN_LED_1] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_1] |= PORT_PCR_MUX(1); //Assign output
-  
-  PORTC->PCR[GREEN_LED_2] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_2] |= PORT_PCR_MUX(1); //Assign output 
-  
-  PORTC->PCR[GREEN_LED_3] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_3] |= PORT_PCR_MUX(1); //Assign output 
-   
-  PORTC->PCR[GREEN_LED_4] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_4] |= PORT_PCR_MUX(1); //Assign output 
-   
-  PORTC->PCR[GREEN_LED_5] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_5] |= PORT_PCR_MUX(1); //Assign output 
-   
-  PORTC->PCR[GREEN_LED_6] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_6] |= PORT_PCR_MUX(1); //Assign output 
-   
-  PORTC->PCR[GREEN_LED_7] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_7] |= PORT_PCR_MUX(1); //Assign output 
-   
-  PORTC->PCR[GREEN_LED_8] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_8] |= PORT_PCR_MUX(1); //Assign output 
-  
-  PORTC->PCR[GREEN_LED_9] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_9] |= PORT_PCR_MUX(1); //Assign output 
-   
-  PORTC->PCR[GREEN_LED_10] &= ~PORT_PCR_MUX_MASK; //clear 
-  PORTC->PCR[GREEN_LED_10] |= PORT_PCR_MUX(1); //Assign output 
-  
-  //Set Data Direction Registers for PortB and PortD
-  PTC->PDDR |= (MASK(GREEN_LED_1) | MASK(GREEN_LED_2) | MASK(GREEN_LED_3) | MASK(GREEN_LED_4) | MASK(GREEN_LED_5) | 
-                MASK(GREEN_LED_6) | MASK(GREEN_LED_7) | MASK(GREEN_LED_8) | MASK(GREEN_LED_9) | MASK(GREEN_LED_10));
-								
-								
-								
-								
-	// RED LED 
-	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;
-    
-	PORTB->PCR[RED_LED_1] &= ~PORT_PCR_MUX_MASK;
-	PORTB->PCR[RED_LED_1] |= PORT_PCR_MUX(1);
-	
-	PTB->PDDR |= MASK(RED_LED_1);
-};
-
-
-
-
-void led_toggler(int colour_current) { //, int colour_previou
-  PTE->PCOR = (MASK(2)|MASK(3)|MASK(4)|MASK(5)|MASK(20)|MASK(21)|MASK(22)|MASK(23)|MASK(29)|MASK(30));
-  //PTE->PCOR = MASK(colour_previous);
-  PTE->PSOR = MASK(colour_current);
-  //delay(0xf0f0); // POTENTIAL BUG -> could cause a lot of lag time and stall processer
-	osDelay(61680); // TODO: Fine-Tune this. I converted 0xf0f0 directly to decimal
-}
-void green_led_left_to_right(){
-  while (1){
-		led_toggler(GREEN_LED_1);
-		led_toggler(GREEN_LED_2);
-		led_toggler(GREEN_LED_3);
-		led_toggler(GREEN_LED_4);
-		led_toggler(GREEN_LED_5);
-		led_toggler(GREEN_LED_6);
-		led_toggler(GREEN_LED_7);
-		led_toggler(GREEN_LED_8);
-		led_toggler(GREEN_LED_9);
-		led_toggler(GREEN_LED_10); // final state
-		led_toggler(GREEN_LED_10);
-		led_toggler(GREEN_LED_9);
-		led_toggler(GREEN_LED_8);
-		led_toggler(GREEN_LED_7);
-		led_toggler(GREEN_LED_6);
-		led_toggler(GREEN_LED_5);
-		led_toggler(GREEN_LED_4);
-		led_toggler(GREEN_LED_3);
-		led_toggler(GREEN_LED_2);
-		led_toggler(GREEN_LED_1);
-	}
-}
-
-
-
-void green_led_remain() { //, int colour_previou
-  PTE->PSOR = (MASK(2)|MASK(3)|MASK(4)|MASK(5)|MASK(20)|MASK(21)|MASK(22)|MASK(23)|MASK(29)|MASK(30));
-  //delay();
-}
-
-
-
-void toggleRedLED500ms (){    // Red LEDs go on for 500ms and off for 500ms
-    while(1){
-    PTB->PCOR |= MASK(RED_LED_1);
-    osDelay(500);
-    PTB->PSOR |= MASK(RED_LED_1);
-    osDelay(500);
-    }
-}
-	
-void toggleREDLED250ms (){    // Red LEDs go on for 250ms and off for 250ms
-    while(1){
-    PTB->PCOR |= MASK(RED_LED_1);
-    osDelay(250);
-    PTB->PSOR |= MASK(RED_LED_1);
-    osDelay(250);
-    }
-}
- 
-
-
-
-
-// ####################### END OF LED TASK ###############################
-
-
-
-
-// ##################### START OF UART IRQ ############################
-
-void UART2_IRQHandler(void) {
-  NVIC_ClearPendingIRQ(UART2_IRQn);
-
-  // Transmitter ready
-  if(UART2->S1 & UART_S1_TDRE_MASK) {
-    if(Q_Empty(&tx_q)) {
-            // Queue Empty so disable interrupts
-            UART2->C2 &= ~UART_C2_TIE_MASK; 
-        } else {
-            UART2->D = Q_Dequeue(&tx_q);
-        }
-  }
-
-  // If receiver is full
-  if(UART2->S1 & UART_S1_RDRF_MASK) {
-        if(Q_Full(&rx_q)) {
-            while(1); // TODO: Handle error
-        } else {
-            rx_IRQ_data = UART2->D;
-        }
-  }
-
-  // Error checking
-  if(UART2->S1 & (UART_S1_OR_MASK | 
-                    UART_S1_NF_MASK | 
-                    UART_S1_FE_MASK | 
-                    UART_S1_PF_MASK)) {
-    // TODO: Handle error
-    // TODO: Clear Flag
-    return;
-  }
-}
-// ####################### END OF UART IRQ #####################
-
-
-// ####################### START OF THREADS ###############################
-
-void motor_thread(void *argument) {
-	for(;;) {
-		//offAllLed();
-    //stopMotor();
-    // left and right are both 4 bit numbers from 0 (UP) to 15 (DOWN)
-    // 7-8 is the idle position
-    uint8_t leftStick = (rx_IRQ_data >> 4);
-    uint8_t rightStick = rx_IRQ_data & 0x0F;
-
-    // Direction (FORWARD == 1) 
-    uint8_t leftDir = leftStick - 8 > 0 ? FORWARD : BACKWARDS;
-    // Magnitude from 0 to 7
-    uint8_t leftMag = leftStick - 8 > 0 ? leftStick - 8 : 8 - leftStick;
-
-    // Direction (LEFT == 2) 
-    uint8_t rightDir = rightStick - 8 > 0 ? LEFT : RIGHT;
-    // Magnitude from 0 to 7
-    uint8_t rightMag = rightStick - 8 > 0 ? rightStick - 8 : 8 - rightStick;
-
-		if (rx_IRQ_data == 0x01) {
-				forwardMotor(); // R1 full speed
-		} else if (rx_IRQ_data == 0x02) { 
-				rightTurn(); // L1 full speed
-		} else if (rx_IRQ_data == 0x06) {
-				forwardMotor(); // triangle
-		} else if (rx_IRQ_data == 0x03) {
-				reverseMotor(); // cross half speed
-		} else if (rx_IRQ_data == 0x04) {
-				rotateLeft(); // square
-		} else if (rx_IRQ_data == 0x05) {
-				rotateRight(); // circle
-		} else {
-				stopMotor();
-		}
-		
-		// TODO: POTENTIAL BUG 
-		// I expect that there will be an additional button that will play the unique sound
-		// And this would need to be changed. 
-		// If we assume that once we finish the challenge run, the robot will be stationary then this does not need to be changed
-		// Moving
-		if (rx_IRQ_data == 0x01 || rx_IRQ_data == 0x02 || rx_IRQ_data == 0x03 ||
-				rx_IRQ_data == 0x04 || rx_IRQ_data == 0x05 || rx_IRQ_data == 0x06) {
-			osSemaphoreRelease(ledMovingSem);
-		}
-		// Stationary
-		else { 
-			osSemaphoreRelease(ledStationarySem);
-		}
-		
-		// TODO: Add a button that plays the alternative song for when the race ends
-		if (rx_IRQ_data == 0x10) {
-			osSemaphoreRelease(audioRaceFinishedSem);
-		}
-		else { 
-			osSemaphoreRelease(audioRaceOngoingSem);
-		}
-		
-		
-		
-		// FOR TESTING
-    // if (rx_IRQ_data == 0x31) { // ON Red LED
-    //    PTB->PCOR = MASK(RED_LED); // TEST
-    // } else if(left > 8) { // LEFT DOWN
-    //   PTB->PCOR = MASK(GREEN_LED); // JUST TO TEST
-    //  } else if (right < 7) { // RIGHT UP
-    //    PTD->PCOR = MASK(BLUE_LED); // JUST TO TEST
-    // } else { 
-    //   offAllLed();
-    // }	
-	}
-	
-}
-
-
-// POTENTIAL BUG: will this run multiple times? I dun think so right 
-void audio_race_ongoing_thread(void *argument) {
-	for(;;)
-	{
-		osSemaphoreAcquire(audioRaceOngoingSem, osWaitForever);
-		play_once_upon_a_time_one_octave_up();
-		osSemaphoreRelease(audioRaceOngoingSem);
-	}
-}
-
-void audio_race_finished_thread(void *argument) {
-	for(;;)
-	{
-		osSemaphoreAcquire(audioRaceFinishedSem, osWaitForever);
-		play_river_flows_in_you();
-		osSemaphoreRelease(audioRaceFinishedSem);
-	}
-
-}
-
-
-
-
-
-void led_stationary_thread(void *argument) 
-{
-	for(;;)
-	{
-		osSemaphoreAcquire(ledStationarySem, osWaitForever);
-		// Function for Front 8-10 Green LED to be in ALL LIGHTED UP
-		green_led_remain();
-		
-		// Function for Rear 8-10 Red LED to be Flashing at 250 ms ON ,250 ms OFF
-		toggleREDLED250ms(); // delay is already built in
-		
-		osSemaphoreRelease(ledStationarySem);
-	}
-};
-
-void led_moving_thread(void *argument)
-{
-	
-	for(;;)
-	{
-		osSemaphoreAcquire(ledMovingSem, osWaitForever);
-		// Function for Front 8-10 Green LED to be in RUNNING MODE
-		green_led_left_to_right();
-		
-		// Function for Rear 8-10 Red LED to be Flashing at 500 ms ON ,500 ms OFF
-		toggleRedLED500ms(); // delay is already built in
-		;
-		osSemaphoreRelease(ledMovingSem);
-	}
-	
-	
-}
-
-
-// ######################## END OF THREADS  ################################
-
-
-
-
-
-
-/*----------------------------------------------------------------------------
- * Application main thread
- *---------------------------------------------------------------------------*/
 void app_main (void *argument) {
  
   // ...
   for (;;) {
-		
+		;
 	
 	
 	}
 }
-
 
 int main (void) {
  
   // System Initialization
   SystemCoreClockUpdate();
-	
-	
-	// AUDIO 
-	initAudioPWM();
-	audioRaceOngoingSem = osSemaphoreNew(1,0,NULL);
-	audioRaceFinishedSem = osSemaphoreNew(1,0,NULL);
-	
-  
+	 
 	// MOTOR 
-  // initLED();
   initUART2(BAUD_RATE);
   initMotorPWM();
   offAllLed();
@@ -1053,30 +977,23 @@ int main (void) {
 	
 	// LED
 	InitLEDGPIO();
-	ledStationarySem = osSemaphoreNew(1,0,NULL);
-	ledMovingSem = osSemaphoreNew(1,0,NULL);
 	
-
-	
+	// AUDIO
+	initAudioPWM();
 	
  
-  osKernelInitialize();                 // Initialize CMSIS-RTOS
-	
+  osKernelInitialize();        
 	
 	osThreadNew(motor_thread, NULL, NULL);
-	osThreadNew(led_moving_thread, NULL,NULL);
-	osThreadNew(led_stationary_thread, NULL, NULL);
-	osThreadNew(audio_race_ongoing_thread, NULL, NULL);
-	osThreadNew(audio_race_finished_thread, NULL, NULL);
-	
-	
-	
-	
-	
-  osThreadNew(app_main, NULL, NULL);    // Create application main thread
+	osThreadNew(led_green_thread, NULL, NULL);
+	osThreadNew(led_red_thread, NULL, NULL);
+	osThreadNew(audio_thread,NULL,NULL);
+
+  //osThreadNew(app_main, NULL, NULL);    // Create application main thread
 	
 	
 	
   osKernelStart();                      // Start thread execution
   for (;;) {}
 }
+
